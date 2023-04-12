@@ -4,14 +4,19 @@
   <meta charset="utf-8">
   
   
-  <title>前端芯事</title>
+  <title>记一次 RN 第三方组件 react-native-htmlview 问题排查 | 前端芯事</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="前端芯事">
-<meta property="og:url" content="https://shenxiang11.github.io/blog/index.html">
+  <meta name="description" content="问题复现在 Shopee Food App 商家端开发时，遇到一个奇怪的问题：RN 开发的 app 页面中的富文本图片，会显示不出来，显示成一个模糊不清的图片。 神奇的是，这不是一个必现的问题，当时排查了很久，终于找到了问题发生的地方。 问题排查首先，我是没有任何头绪的，只能观察家在失败的不同图片，首先发现这些图片虽然模糊不清，但是它们的色彩是和原图相关的。 再仔细观察，会发现这个模糊效果似乎就是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次 RN 第三方组件 react-native-htmlview 问题排查">
+<meta property="og:url" content="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/index.html">
 <meta property="og:site_name" content="前端芯事">
+<meta property="og:description" content="问题复现在 Shopee Food App 商家端开发时，遇到一个奇怪的问题：RN 开发的 app 页面中的富文本图片，会显示不出来，显示成一个模糊不清的图片。 神奇的是，这不是一个必现的问题，当时排查了很久，终于找到了问题发生的地方。 问题排查首先，我是没有任何头绪的，只能观察家在失败的不同图片，首先发现这些图片虽然模糊不清，但是它们的色彩是和原图相关的。 再仔细观察，会发现这个模糊效果似乎就是">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-11T18:20:00.000Z">
+<meta property="article:modified_time" content="2023-04-12T04:22:13.908Z">
 <meta property="article:author" content="芯芯爸爸">
+<meta property="article:tag" content="React Native">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/blog/atom.xml" title="前端芯事" type="application/atom+xml">
@@ -69,9 +74,7 @@
 </header>
 
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-记一次-RN-第三方组件问题排查" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-记一次-RN-第三方组件问题排查" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" class="article-date">
   <time class="dt-published" datetime="2023-04-11T18:20:00.000Z" itemprop="datePublished">2023-04-11</time>
@@ -84,8 +87,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">记一次 RN 第三方组件 react-native-htmlview 问题排查</a>
+    <h1 class="p-name article-title" itemprop="headline name">
+      记一次 RN 第三方组件 react-native-htmlview 问题排查
     </h1>
   
 
@@ -128,81 +131,19 @@
     </footer>
   </div>
   
-</article>
-
-
-
+    
+<nav id="article-nav">
   
-    <article id="post-冒泡排序" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" class="article-date">
-  <time class="dt-published" datetime="2023-04-09T12:33:22.000Z" itemprop="datePublished">2023-04-09</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
   
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/">经典排序算法之冒泡排序：我的冒泡排序有什么问题</a>
-    </h1>
+    <a href="/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">经典排序算法之冒泡排序：我的冒泡排序有什么问题</div>
+    </a>
   
+</nav>
 
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>力扣 912 题（排序数组），是一道适合练习各种排序方式的题。今天本想把部分排序算法一一实现一下，结果发现刚写冒泡就出问题了。</p>
-<p>为了加深印象，我做了两个个违背<del>祖宗</del>懒惰的决定，一是一定要重新拾起写博客的习惯，二是用 Canvas 把排序算法做成动画。</p>
-<hr>
-<h2 id="我的错误版本"><a href="#我的错误版本" class="headerlink" title="我的错误版本"></a>我的错误版本</h2><p>首先，看下我的错误版本的代码：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">sortArray</span>(<span class="params">nums: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span>[] &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;nums.<span class="property">length</span>-<span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j=i+<span class="number">1</span>; j&lt;nums.<span class="property">length</span>; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; nums[j]) &#123;</span><br><span class="line">                [nums[i], nums[j]] = [nums[j], nums[i]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> nums;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>配上我做的动画：</p>
-<p><img src="/blog/resources/2023-04-09/01.gif"></p>
-<p>动画中，前两轮的逻辑我已经标注出来了，可以看出该算法的基本逻辑是，从每轮找出第 i 小的数，放到 i 的位置，最小值确实也是”冒泡”到了前面。<br>可以看出我这个实际上不是冒泡，而是有点接近选择排序，选择排序是找出最小值后，在一轮循环结束后再进行交换。<br>而我的这个算法，是每次遇到较小值后就进行交换，因此，我的算法不如选择排序。</p>
-<h2 id="它比真正的冒泡排序好吗？"><a href="#它比真正的冒泡排序好吗？" class="headerlink" title="它比真正的冒泡排序好吗？"></a>它比真正的冒泡排序好吗？</h2><p>如果你注意到动画的最后一帧，注意看我特意设置的重复项来验证排序是否稳定，原本 480’ 是排在 480 后面的，但是在完成排序后，480’ 反而跑到了相对前面的位置。</p>
-<p>这是由于在和较小值交换时，前面的 480 就有可能被交换到 480’ 的后面，从而相对顺序被破坏。</p>
-<p>而我们知道，冒泡排序是稳定的，因为冒泡排序中，只有左边的数字大于右边的数字时才会发生交换，相等的数字之间不会发生交换，所以它是稳定的。</p>
-<p>所以，我的错误写法还丢失了冒泡排序的稳定的优势。</p>
-<p>复杂度方面，同样的实际复杂度，交换的次数也是一样的，所以我的算法没有任何意义。</p>
-<h2 id="正确写法"><a href="#正确写法" class="headerlink" title="正确写法"></a>正确写法</h2><p>我们可以先查询一下维基百科对冒泡排序算法的描述：</p>
-<ol>
-<li>比较相邻的元素。如果第一个比第二个大，就交换它们两个。</li>
-<li>对每一对相邻元素作同样的工作，从开始第一对到结尾的最后一对。这步做完后，最后的元素会是最大的数。</li>
-<li>针对所有的元素重复以上的步骤，除了最后一个。 </li>
-<li>持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较。</li>
-</ol>
-<p>由此给出实现并不困难：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">sortArray</span>(<span class="params">nums: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span>[] &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;nums.<span class="property">length</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j=<span class="number">0</span>; j&lt;nums.<span class="property">length</span>-<span class="number">1</span>-i; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[j] &gt; nums[j+<span class="number">1</span>]) &#123;</span><br><span class="line">                [nums[j], nums[j+<span class="number">1</span>]] = [nums[j+<span class="number">1</span>], nums[j]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> nums;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>动画是这样的：</p>
-<p><img src="/blog/resources/2023-04-09/02.gif"></p>
-<p>可以从图中看出，每一轮结束，是最大值会出现在正确的位置。而且相同的元素的相对位置是正确的。</p>
-<h2 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h2><p>从两种实现来看，代码太像了，我原本的解法估计是看网上某处学来的，本质还是自己理解的不到位。</p>
-<p>如果面试遇到这种简单排序，写完发现结果是正确的，很容易认为自己的算法是正确的，会非常危险。</p>
-<p>所以网上学东西还是需要注意，更倾向于去看一些权威的资料，更要有自己的理解。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgd6qik20004duomayvh8g1u" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
-
-    </footer>
-  </div>
   
 </article>
-
-
-
-  
 
 
 </section>
