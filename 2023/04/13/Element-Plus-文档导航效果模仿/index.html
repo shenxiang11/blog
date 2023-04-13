@@ -15,7 +15,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-04-13/01.gif">
 <meta property="article:published_time" content="2023-04-13T08:25:19.000Z">
-<meta property="article:modified_time" content="2023-04-13T01:32:51.607Z">
+<meta property="article:modified_time" content="2023-04-13T01:35:09.888Z">
 <meta property="article:author" content="芯芯爸爸">
 <meta property="article:tag" content="CSS">
 <meta name="twitter:card" content="summary">
@@ -105,7 +105,7 @@
 
 
 <h2 id="原理简单介绍"><a href="#原理简单介绍" class="headerlink" title="原理简单介绍"></a>原理简单介绍</h2><p>首先介绍一下 <code>radial-gradient</code>，创建一个图像，该图像由从原点辐射的两种或多种颜色之间的渐进过渡组成。它的形状可以是圆形或椭圆形。</p>
-<p>我们使用它在 4x4 的界面上，绘制一个 1x1 的透明的圆圈，我们能看到导航栏下面元素的原因。</p>
+<p>我们使用它在 4x4 的界面上，绘制一个 1x1 的透明的圆圈，然后将它平铺到整个导航栏，这是我们可以透过导航栏看到下面元素的原因。</p>
 <p>最后，是使用 <code>backdrop-filter</code>，它可以让你为一个元素后面区域添加图形效果（如模糊或颜色偏移）。</p>
 <p>因为它适用于元素背后的所有元素，为了看到效果，必须使元素或其背景至少部分透明，我们前一步刚好有一部分是透明的。</p>
 <p>具体应用的图形效果，<code>blur</code> 是高斯模糊，<code>saturate</code> 是修改图像饱和度，你可以在 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/filter">MDN</a> 看看设置它们的效果。</p>
@@ -113,7 +113,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgeg4joo0004bbpc3inpa473" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgeg7ilo0004avorghnjabb3" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
       
       
       
