@@ -79,7 +79,7 @@ class MyReactNativeBridge: NSObject, RCTBridgeDelegate {
 }
 ```
 
-我们创建了一个 `bridge` 对象，他的 `delegate` 实现了 `RCTBridgeDelegate`, 通过 ``sourceURL` 去加载 js bundle 的地址。
+我们创建了一个 `bridge` 对象，他的 `delegate` 实现了 `RCTBridgeDelegate`, 通过 `sourceURL` 去加载 js bundle 的地址。
 
 随后就是通过 `RCRootView` 创建出视图，然后展示即可，其中 `moduleName` 就需要传之前的 appName。
 
@@ -114,4 +114,4 @@ class MyReactNativeBridge: NSObject, RCTBridgeDelegate {
 
 这也让我理解了为什么 RN 能够热更新了，bundle 就是个 js 文件，我们只要替换这个文件地址或者文件就能实现应用的更新。
 
-RN 的出现确实让前端繁荣了一段事件，但是这究竟是好事还是坏事呢，前端已死？客户端已死？
+RN 的出现确实让前端繁荣了一段时间，但是这究竟是好事还是坏事呢，前端已死？客户端已死？
