@@ -109,7 +109,7 @@
 <p>在事件的回调函数中，我们就可以创建我们的 RN 视图，并加载它，代码如下：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> React</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ViewController</span>: <span class="title class_">UIViewController</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">viewDidLoad</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line">        <span class="comment">// Do any additional setup after loading the view.</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBAction</span> <span class="keyword">func</span> <span class="title function_">onClick</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="keyword">Any</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> bridge <span class="operator">=</span> <span class="type">RCTBridge</span>(delegate: <span class="type">MyReactNativeBridge</span>())</span><br><span class="line">        <span class="keyword">let</span> rootView <span class="operator">=</span> <span class="type">RCTRootView</span>(bridge: bridge<span class="operator">!</span>, moduleName: <span class="string">&quot;hybridrn&quot;</span>, initialProperties:  <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> vc <span class="operator">=</span> <span class="type">UIViewController</span>()</span><br><span class="line">        vc.modalPresentationStyle <span class="operator">=</span> .fullScreen</span><br><span class="line">        vc.view <span class="operator">=</span> rootView</span><br><span class="line">        <span class="keyword">self</span>.show(vc, sender: <span class="literal">nil</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyReactNativeBridge</span>: <span class="title class_">NSObject</span>, <span class="title class_">RCTBridgeDelegate</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">sourceURL</span>(<span class="params">for</span> <span class="params">bridge</span>: <span class="type">RCTBridge</span>!) -&gt; <span class="type">URL</span>! &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">URL</span>(string: <span class="string">&quot;http://localhost:8081/index.bundle?platform=ios&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>我们创建了一个 <code>bridge</code> 对象，他的 <code>delegate</code> 实现了 <code>RCTBridgeDelegate</code>, 通过 &#96;&#96;sourceURL&#96; 去加载 js bundle 的地址。</p>
+<p>我们创建了一个 <code>bridge</code> 对象，他的 <code>delegate</code> 实现了 <code>RCTBridgeDelegate</code>, 通过 <code>sourceURL</code> 去加载 js bundle 的地址。</p>
 <p>随后就是通过 <code>RCRootView</code> 创建出视图，然后展示即可，其中 <code>moduleName</code> 就需要传之前的 appName。</p>
 <p>一般混合开发中，我们就可以注册很多的 module，原生去负责这些页面的跳转。</p>
 <h2 id="避坑指南"><a href="#避坑指南" class="headerlink" title="避坑指南"></a>避坑指南</h2><p>这样配置完成后，在开发阶段，我们就可以在这个项目中预览我们 RN 开发的页面了，它的热更新也是没有问题的。</p>
@@ -122,12 +122,12 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>整个集成过程并不难，也遇到了两个比较坑的点，一是 cocoapods 的依赖文件一开始参考的 RN 中文网，估计是很久以前的版本了，怎么都成功不了；二是遇到热更新的问题， 在经过调试后，也顺利解决了。</p>
 <p>开发阶段我们就去加载 bundle 的地址是没有问题的；如果是线上版本，混合开发模式应该是要有一套下载 bundle 的策略，让 App 去加载本地 bundle，这又是个值得去学习的点了。</p>
 <p>这也让我理解了为什么 RN 能够热更新了，bundle 就是个 js 文件，我们只要替换这个文件地址或者文件就能实现应用的更新。</p>
-<p>RN 的出现确实让前端繁荣了一段事件，但是这究竟是好事还是坏事呢，前端已死？客户端已死？</p>
+<p>RN 的出现确实让前端繁荣了一段时间，但是这究竟是好事还是坏事呢，前端已死？客户端已死？</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clggm9rhl000addor8eez290j" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clggmg7fd0005azp2c2lpbxj3" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
       
       
       
@@ -178,7 +178,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clggm9rhh0004ddor2lz18xw6" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clggmg7fc0004azp21rwt0tuy" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
       
       
       
@@ -240,7 +240,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clggm9rhn000dddor8klk2ut4" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clggmg7fg0009azp23tsb6nu9" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
       
       
       
@@ -310,7 +310,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clggm9rhl000bddor791l0dzl" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clggmg7fe0006azp2feu4hpp5" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
       
       
       
