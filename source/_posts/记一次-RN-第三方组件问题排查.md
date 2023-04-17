@@ -1,7 +1,7 @@
 ---
 title: 记一次 RN 第三方组件 react-native-htmlview 问题排查
 date: 2023-04-11 18:20:00
-tags: React Native
+tags: [React Native]
 ---
 
 ## 问题复现
