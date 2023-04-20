@@ -71,6 +71,99 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-a-1-a-2-a-3-的几种下毒方法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" class="article-date">
+  <time class="dt-published" datetime="2023-04-20T17:52:26.000Z" itemprop="datePublished">2023-04-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/">使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><img src="/blog/resources/2023-04/06.jpeg" alt="06.jpeg"></p>
+<p>这算得上是近些年的前端网红题了，曾经对这种网红题非常抵触，认为非常没有意义。</p>
+<p>看到了不少人有做分享，有各种各样的方案，有涉及到 JS 非常基础的知识点，也不得不感叹解题者的脑洞之大。</p>
+<p>但是，拿来做面试题为难没有看过的面试者，就非常非常不地道了。</p>
+<h2 id="鹤顶红"><a href="#鹤顶红" class="headerlink" title="鹤顶红"></a>鹤顶红</h2><p>鹤顶红是武侠剧中出现最多的毒药，真的是江湖出行必备的毒药。</p>
+<p>正常情况下，如果 <code>let a = 1;</code> 则，表达式的后半段必不成立。但是容易想到如果在每个阶段自增后，表达式是可能成立的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="number">1</span>;</span><br><span class="line">a++ === <span class="number">1</span> &amp;&amp; a++ === <span class="number">2</span> &amp;&amp; a++ === <span class="number">3</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>可是这就属于把题改了，我们需要把自增的逻辑藏起来。由于 <code>a</code> 是基础类型，我们基本上不可能对其做什么改造了。</p>
+<p>但是我们如果把 <code>a</code> 定义到 <code>window</code> 上，再加上诸如 <code>Object.defineProperty</code> 的 api，是能够做到的。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> tmp = <span class="number">1</span>;</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(<span class="variable language_">window</span>, <span class="string">&#x27;a&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">get</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> tmp++;</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;)</span><br><span class="line">a === <span class="number">1</span> &amp;&amp; a === <span class="number">2</span> &amp;&amp; a === <span class="number">3</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
+
+<p>由于 <code>defineProperty</code> 的限制，我们不能把 <code>1</code> 作为 <code>value</code>, 设置在属性描述符号内部，不得不外部定义一个变量。</p>
+<p><code>defineProperty</code> 在诸如 Vue2 的框架中，用的非常多，几乎是面试高频会被问到的，所以这种“毒药”是你行走前端江湖必备的。</p>
+<h2 id="曼陀罗"><a href="#曼陀罗" class="headerlink" title="曼陀罗"></a>曼陀罗</h2><p>曼陀罗这个名字颇具异域风情、《神雕侠侣》中杨过就是中了此毒。</p>
+<p>将到这里我是要将此题改为另一道类似的题目：使 <code>a == 1 &amp;&amp; a == 2 &amp;&amp; a == 3</code> 返回 <code>true</code>。</p>
+<p>将严格相等改为了普通的相等，因为通常代码规范中要求使用严格相等，导致 <code>==</code> 不常写，故将此命名为这个异域的名字。</p>
+<p>正因为是不严格相等，我们可以利用 JS 中的类型转换机制来下毒。</p>
+<p>这个机制是这样的：</p>
+<ul>
+<li>如果两个值类型相同，则之间进行比较，和全等是一样的。</li>
+<li>如果一个是 null，另一个是 undefined，则相等。</li>
+<li>如果一个是数值，另一个是字符串，把字符串转换为数值，再比较转换后的数值。</li>
+<li>如果一个是 true，把它转成 1，再比较。</li>
+<li>如果一个是 false，把它转成 0，再比较。</li>
+<li>如果一个是对象，另一个是数值或字符串，会将对象转换为原始值，再比较。用到的是 valueOf() 和 toString() 方法。</li>
+</ul>
+<p>我们可以利用最后一点解这个题：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">valueOf</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">value</span>++;</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br><span class="line">a == <span class="number">1</span> &amp;&amp; a == <span class="number">2</span> &amp;&amp; a == <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<p>先前提到的那种解法必然也可以解这道题，但是这个写法不能用于上一道题，因为全等不会触发类型转换。</p>
+<h2 id="十香软筋散"><a href="#十香软筋散" class="headerlink" title="十香软筋散"></a>十香软筋散</h2><p>此毒无色无香，药性一发作便全身筋骨酸软，数日后虽行动如常，内力半点发挥不出。毒药和解药表面无异，若中毒者再服毒药则气绝身亡。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a‌ = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">const</span> a‍ = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">const</span> a = <span class="number">3</span>;</span><br><span class="line">a‌ === <span class="number">1</span> &amp;&amp; a‍ === <span class="number">2</span> &amp;&amp; a === <span class="number">3</span></span><br></pre></td></tr></table></figure>
+
+<p>你可能会说：“这段代码应该是会报错的！”。但是相信我，你复制到控制台执行一下试试。</p>
+<p>是的 <code>const</code> 声明的是常量，理应抛出错误：<code>Identifier &#39;haha&#39; has already been declared</code>。</p>
+<p>实际上，我这里定义的三个 <code>a</code> 是不同的变量，有一个是 <code>a</code>, 一个是 <code>ax</code>, 一个是 <code>ay</code>，其中 x, y 是 unicode 里不可见的字符，所以在上面的代码里看到的都是 <code>a</code> 的形式。</p>
+<p>我目前正在使用 webstorm 编辑这篇文章，我也发现了这些不可见字符会显示出来“怪怪的”，如果你也打开这篇 markdown，你会发现：</p>
+<p><img src="/blog/resources/2023-04/05.png" alt="05.png"></p>
+<p>构造变量名称（唯一标识符）的通用规则是：</p>
+<ul>
+<li>名称可包含字母、数字、下划线和美元符号</li>
+<li>名称必须以字母开头</li>
+<li>名称也可以 $ 和 _ 开头</li>
+<li>名称对大小写敏感（y 和 Y 是不同的变量）</li>
+<li>保留字（比如 JavaScript 的关键词）无法用作变量名称</li>
+</ul>
+<p>实际上，使用中文，甚至是 emoji 表情作为变量名称都是合法的，所以这里可以使用不可见的 unicode 字符作为变量名。</p>
+<p>当然，如果想要运行正确，我们得偷偷的把题改了，使用我们新声明的变量，虽然它们看起来一摸一样。</p>
+<p>这种“下毒”，真是无色无味，正像软筋散一样。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这边汇总了二个针对原题的解法：通过使用 <code>Object.defineProperty</code> 和利用变量名称的规则的方法；</p>
+<p>以及对它的变种题目：通过对象类型转化时默认调用 <code>valueOf</code> 函数的机制。</p>
+<p>这道题至少也算给我们带来了三个 JS 基础知识点把，好了，你（这道题）可以毒发身亡了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgp3ijpa0006azow836mfkuz" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="posts-Swift-原生应用与-WebView-互相通信" class="h-entry article article-type-posts" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" class="article-date">
@@ -123,7 +216,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgopfgmr0005dhog7c2487dh" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgp3ijp90005azowez4n9n39" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
@@ -178,7 +271,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgopfgmq0004dhogchvw3dc1" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgp3ijp80004azow71f6ewjo" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
@@ -238,7 +331,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgopfgmu000adhog9tqre285" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgp3ijpd000cazowc4u79m0i" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
       
       
       
@@ -308,7 +401,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgopfgms0006dhog721l9sgy" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgp3ijpb0009azowe8cw8g6p" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
       
       
       
@@ -359,7 +452,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgopfgmo0002dhog43hfeclz" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgp3ijp50002azow3e93hxuu" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
       
       
       
@@ -407,7 +500,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" data-id="clgopfgmw000cdhog1np9cy2v" data-title="常用的术语及英文缩写（不定期更新）" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" data-id="clgp3ijpe000eazow8b2ndte4" data-title="常用的术语及英文缩写（不定期更新）" class="article-share-link">Teilen</a>
       
       
       
@@ -469,7 +562,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgopfgn3000vdhog1uiyh8x9" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgp3ijph000gazowedtw1dws" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
       
       
       
@@ -539,7 +632,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgopfgmt0009dhog2co47cv1" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgp3ijpc000aazowhi7g7d2a" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
       
       
       
@@ -576,7 +669,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Javascript/" style="font-size: 10px;">Javascript</a> <a href="/blog/tags/React-Native/" style="font-size: 20px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Javascript/" style="font-size: 20px;">Javascript</a> <a href="/blog/tags/React-Native/" style="font-size: 20px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
     </div>
   </div>
 
@@ -598,6 +691,10 @@
       <ul>
         
           <li>
+            <a href="/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/">使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法</a>
+          </li>
+        
+          <li>
             <a href="/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/">Swift 原生应用与 WebView 互相通信</a>
           </li>
         
@@ -611,10 +708,6 @@
         
           <li>
             <a href="/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/">iOS Swift 工程集成 React Native</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/">Element Plus 文档导航效果模仿</a>
           </li>
         
       </ul>
