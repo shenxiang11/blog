@@ -7,7 +7,7 @@ tags: [Swift, Javascript]
 
 ## 显示一个 Webview
 
-原本的 Web view 已经被标记未 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 `WKWebView` 来显示我们的页面。
+原本的 Web view 已经被标记为 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 `WKWebView` 来显示我们的页面。
 
 需要注意的是该控件并不在 `UIKit` 包里，我们需要导入 `Webkit`，具体的加载显示逻辑如下：
 
