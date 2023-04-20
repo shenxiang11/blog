@@ -6,17 +6,17 @@
   
   <title>Swift 原生应用与 WebView 互相通信 | 前端芯事</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="显示一个 Webview原本的 Web view 已经被标记未 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 WKWebView 来显示我们的页面。 需要注意的是该控件并不在 UIKit 包里，我们需要导入 Webkit，具体的加载显示逻辑如下： 1234567891011121314import UIKitimport WebKitclass ViewController:">
+  <meta name="description" content="显示一个 Webview原本的 Web view 已经被标记为 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 WKWebView 来显示我们的页面。 需要注意的是该控件并不在 UIKit 包里，我们需要导入 Webkit，具体的加载显示逻辑如下： 1234567891011121314import UIKitimport WebKitclass ViewController:">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Swift 原生应用与 WebView 互相通信">
 <meta property="og:url" content="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/index.html">
 <meta property="og:site_name" content="前端芯事">
-<meta property="og:description" content="显示一个 Webview原本的 Web view 已经被标记未 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 WKWebView 来显示我们的页面。 需要注意的是该控件并不在 UIKit 包里，我们需要导入 Webkit，具体的加载显示逻辑如下： 1234567891011121314import UIKitimport WebKitclass ViewController:">
+<meta property="og:description" content="显示一个 Webview原本的 Web view 已经被标记为 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 WKWebView 来显示我们的页面。 需要注意的是该控件并不在 UIKit 包里，我们需要导入 Webkit，具体的加载显示逻辑如下： 1234567891011121314import UIKitimport WebKitclass ViewController:">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-04/03.png">
 <meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-04/04.gif">
 <meta property="article:published_time" content="2023-04-20T11:10:33.000Z">
-<meta property="article:modified_time" content="2023-04-20T05:36:32.709Z">
+<meta property="article:modified_time" content="2023-04-20T05:43:53.799Z">
 <meta property="article:author" content="芯芯爸爸">
 <meta property="article:tag" content="Swift">
 <meta property="article:tag" content="Javascript">
@@ -100,7 +100,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="显示一个-Webview"><a href="#显示一个-Webview" class="headerlink" title="显示一个 Webview"></a>显示一个 Webview</h2><p>原本的 Web view 已经被标记未 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 <code>WKWebView</code> 来显示我们的页面。</p>
+        <h2 id="显示一个-Webview"><a href="#显示一个-Webview" class="headerlink" title="显示一个 Webview"></a>显示一个 Webview</h2><p>原本的 Web view 已经被标记为 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 <code>WKWebView</code> 来显示我们的页面。</p>
 <p>需要注意的是该控件并不在 <code>UIKit</code> 包里，我们需要导入 <code>Webkit</code>，具体的加载显示逻辑如下：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> WebKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ViewController</span>: <span class="title class_">UIViewController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBOutlet</span> <span class="keyword">weak</span> <span class="keyword">var</span> webview: <span class="type">WKWebView</span>!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">viewDidLoad</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">        webview.load(<span class="type">URLRequest</span>(url: <span class="type">URL</span>(string: <span class="string">&quot;https://www.baidu.com&quot;</span>)<span class="operator">!</span>))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -130,7 +130,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgoowwik0006b4opbtup5d6t" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgop6d200006b6on8jb6f6ak" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       

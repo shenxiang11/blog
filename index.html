@@ -93,7 +93,7 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <h2 id="显示一个-Webview"><a href="#显示一个-Webview" class="headerlink" title="显示一个 Webview"></a>显示一个 Webview</h2><p>原本的 Web view 已经被标记未 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 <code>WKWebView</code> 来显示我们的页面。</p>
+        <h2 id="显示一个-Webview"><a href="#显示一个-Webview" class="headerlink" title="显示一个 Webview"></a>显示一个 Webview</h2><p>原本的 Web view 已经被标记为 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 <code>WKWebView</code> 来显示我们的页面。</p>
 <p>需要注意的是该控件并不在 <code>UIKit</code> 包里，我们需要导入 <code>Webkit</code>，具体的加载显示逻辑如下：</p>
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> WebKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ViewController</span>: <span class="title class_">UIViewController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBOutlet</span> <span class="keyword">weak</span> <span class="keyword">var</span> webview: <span class="type">WKWebView</span>!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">viewDidLoad</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">        webview.load(<span class="type">URLRequest</span>(url: <span class="type">URL</span>(string: <span class="string">&quot;https://www.baidu.com&quot;</span>)<span class="operator">!</span>))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -123,7 +123,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgoowwik0006b4opbtup5d6t" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgop6d200006b6on8jb6f6ak" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
@@ -178,7 +178,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgoowwij0005b4op4hgcetzn" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgop6d1z0005b6onh4dqe30q" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
@@ -238,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgoowwin000cb4opdvmh6vmn" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgop6d24000cb6on841q9jpc" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
       
       
       
@@ -308,7 +308,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgoowwil0009b4opb7p38ber" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgop6d220009b6onbnahbxw9" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
       
       
       
@@ -359,7 +359,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgoowwii0004b4op4xet8319" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgop6d1y0004b6onggk22tew" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
       
       
       
@@ -421,7 +421,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgoowwiu000vb4op3cc1dcmp" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgop6d2b000vb6on56u3amgg" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
       
       
       
@@ -491,7 +491,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgoowwim000ab4opg8ga89yb" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgop6d23000ab6on5xrj3h27" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
       
       
       
