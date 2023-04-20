@@ -71,6 +71,72 @@
       <div class="outer">
         <section id="main">
   
+    <article id="posts-Swift-原生应用与-WebView-互相通信" class="h-entry article article-type-posts" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" class="article-date">
+  <time class="dt-published" datetime="2023-04-20T11:10:33.000Z" itemprop="datePublished">2023-04-20</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/">Swift 原生应用与 WebView 互相通信</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="显示一个-Webview"><a href="#显示一个-Webview" class="headerlink" title="显示一个 Webview"></a>显示一个 Webview</h2><p>原本的 Web view 已经被标记未 deprecated 了，所以如果没有历史包袱，我们的项目应该使用 <code>WKWebView</code> 来显示我们的页面。</p>
+<p>需要注意的是该控件并不在 <code>UIKit</code> 包里，我们需要导入 <code>Webkit</code>，具体的加载显示逻辑如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> WebKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ViewController</span>: <span class="title class_">UIViewController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBOutlet</span> <span class="keyword">weak</span> <span class="keyword">var</span> webview: <span class="type">WKWebView</span>!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">viewDidLoad</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">        webview.load(<span class="type">URLRequest</span>(url: <span class="type">URL</span>(string: <span class="string">&quot;https://www.baidu.com&quot;</span>)<span class="operator">!</span>))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以在 iOS 中，显示我们的网页项目了。</p>
+<p><img src="/blog/resources/2023-04/03.png" alt="03.png"></p>
+<h2 id="Swift-调用-JS-代码"><a href="#Swift-调用-JS-代码" class="headerlink" title="Swift 调用 JS 代码"></a>Swift 调用 JS 代码</h2><p>我在原生端添加了一个按钮，点击后会调用 <code>callJS</code>：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> WebKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ViewController</span>: <span class="title class_">UIViewController</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBOutlet</span> <span class="keyword">weak</span> <span class="keyword">var</span> webview: <span class="type">WKWebView</span>!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">viewDidLoad</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">        webview.load(<span class="type">URLRequest</span>(url: <span class="type">URL</span>(string: <span class="string">&quot;https://www.baidu.com&quot;</span>)<span class="operator">!</span>))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBAction</span> <span class="keyword">func</span> <span class="title function_">callJS</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="keyword">Any</span>) &#123;</span><br><span class="line">        webview.evaluateJavaScript(<span class="string">&quot;function test() &#123;return 1&#125;;test();&quot;</span>) &#123; result, err <span class="keyword">in</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="built_in">type</span>(of: result), result) <span class="comment">// Option(Any) Option(1)</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="built_in">type</span>(of: err), err) <span class="comment">// Option(Error) nil</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们可以通过 <code>evaluateJavaScript</code>，传入 JS 代码以执行，这样我们就可以方便地调用 JS 的全局方法了，我将执行结果写到了注释中。</p>
+<p>调用的返回值或者调用过程中的错误，回通过 Swift 中的回调拿到。由于 JS 类型的灵活和两种语言的类型不是完全匹配的，result 的类型是 Option(Any)，err 的类型是 Optional<Error>。</p>
+<h2 id="JS-端调用-Swift-方法"><a href="#JS-端调用-Swift-方法" class="headerlink" title="JS 端调用 Swift 方法"></a>JS 端调用 Swift 方法</h2><p>我的示例选择了一个 webview 调用 iOS 端的相册，然后 iOS 端将图片路径回调给 webview 的功能。</p>
+<p><img src="/blog/resources/2023-04/04.gif" alt="04.gif"></p>
+<p>由于两端交互使用了 file 协议，我后续也将网页改成了本地加载工程中的网页的形式，如果这一块不清楚，你可以跳到最后看最终代码。</p>
+<p>可以通过 <code>webview.configuration.userContentController.add(self, name: &quot;showPhotoPicker&quot;)</code> 这个形式，往 webview 中注册原生方法。</p>
+<p>我们在 webview 中，就可以通过 <code>webkit.messageHandlers.showPhotoPicker.postMessage(&quot;onGetPhoto&quot;);</code> 这个形式去调用原生方法。</p>
+<p>这里的 postMessage 的参数，我设计为通知原生端选择图片后，应该调用的 JS 回调方法名称，这一步其实又是 Swift 调用 JS 了，我们可以通过 <code>WKScriptMessageHandler</code> 协议的 <code>message.body</code> 拿到它。</p>
+<p>最后通过调用 JS，将图片的地址回传给 webview，以显示图片。</p>
+<h2 id="最终代码"><a href="#最终代码" class="headerlink" title="最终代码"></a>最终代码</h2><figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> WebKit</span><br><span class="line"></span><br><span class="line"><span class="keyword">typealias</span> <span class="type">PhotoSelectedCallback</span> <span class="operator">=</span> (<span class="keyword">_</span> url: <span class="type">NSURL</span>) -&gt; <span class="type">Void</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ViewController</span>: <span class="title class_">UIViewController</span>, <span class="title class_">UINavigationControllerDelegate</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBOutlet</span> <span class="keyword">weak</span> <span class="keyword">var</span> webview: <span class="type">WKWebView</span>!</span><br><span class="line"></span><br><span class="line">    <span class="keyword">var</span> onPhotoSelected: <span class="type">PhotoSelectedCallback</span>?</span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">viewDidLoad</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line"></span><br><span class="line">        webview.configuration.userContentController.add(<span class="keyword">self</span>, name: <span class="string">&quot;showPhotoPicker&quot;</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> htmlFile <span class="operator">=</span> <span class="type">Bundle</span>.main.path(forResource: <span class="string">&quot;index&quot;</span>, ofType: <span class="string">&quot;html&quot;</span>)<span class="operator">!</span></span><br><span class="line">        webview.loadFileURL(<span class="type">URL</span>(fileURLWithPath: htmlFile), allowingReadAccessTo: <span class="type">URL</span>(fileURLWithPath: htmlFile))</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBAction</span> <span class="keyword">func</span> <span class="title function_">callJS</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="keyword">Any</span>) &#123;</span><br><span class="line">        webview.evaluateJavaScript(<span class="string">&quot;function test() &#123;return1 1&#125;;test();&quot;</span>) &#123; result, err <span class="keyword">in</span></span><br><span class="line">            <span class="built_in">print</span>(<span class="built_in">type</span>(of: result), result)</span><br><span class="line">            <span class="built_in">print</span>(<span class="built_in">type</span>(of: err), err)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// webkit.messageHandlers.showPhotoPicker.postMessage();</span></span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">showPhotoPicker</span>(<span class="params">onSelected</span>: <span class="keyword">@escaping</span> <span class="type">PhotoSelectedCallback</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> imagePicker <span class="operator">=</span> <span class="type">UIImagePickerController</span>()</span><br><span class="line">        imagePicker.sourceType <span class="operator">=</span> .photoLibrary</span><br><span class="line">        imagePicker.delegate <span class="operator">=</span> <span class="keyword">self</span></span><br><span class="line">        onPhotoSelected <span class="operator">=</span> onSelected</span><br><span class="line">        present(imagePicker, animated: <span class="literal">true</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">ViewController</span>: <span class="title class_">UIImagePickerControllerDelegate</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">imagePickerController</span>(<span class="keyword">_</span> <span class="params">picker</span>: <span class="type">UIImagePickerController</span>, <span class="params">didFinishPickingMediaWithInfo</span> <span class="params">info</span>: [<span class="type">UIImagePickerController</span>.<span class="params">InfoKey</span> : <span class="keyword">Any</span>]) &#123;</span><br><span class="line">        <span class="keyword">let</span> fileUrl <span class="operator">=</span> info[.imageURL]</span><br><span class="line">        picker.dismiss(animated: <span class="literal">true</span>) &#123;</span><br><span class="line">            <span class="keyword">self</span>.onPhotoSelected<span class="operator">?</span>(fileUrl <span class="keyword">as!</span> <span class="type">NSURL</span>)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">extension</span> <span class="title class_">ViewController</span>: <span class="title class_">WKScriptMessageHandler</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">userContentController</span>(<span class="keyword">_</span> <span class="params">userContentController</span>: <span class="type">WKUserContentController</span>, <span class="params">didReceive</span> <span class="params">message</span>: <span class="type">WKScriptMessage</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span> message.name &#123;</span><br><span class="line">        <span class="keyword">case</span> <span class="string">&quot;showPhotoPicker&quot;</span>:</span><br><span class="line">            showPhotoPicker &#123; url <span class="keyword">in</span></span><br><span class="line">                <span class="keyword">if</span> <span class="keyword">let</span> method <span class="operator">=</span> message.body <span class="keyword">as?</span> <span class="type">String</span> &#123;</span><br><span class="line">                    <span class="keyword">let</span> callStr <span class="operator">=</span> method <span class="operator">+</span> <span class="string">&quot;(<span class="subst">\&quot;</span>&quot;</span> <span class="operator">+</span> url.absoluteString<span class="operator">!</span> <span class="operator">+</span> <span class="string">&quot;<span class="subst">\&quot;</span>)&quot;</span></span><br><span class="line">                    <span class="keyword">self</span>.webview.evaluateJavaScript(callStr)</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        <span class="keyword">default</span>: <span class="keyword">break</span></span><br><span class="line">            <span class="comment">// do nothing or throw an error.</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;X-UA-Compatible&quot;</span> <span class="attr">content</span>=<span class="string">&quot;IE=edge&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>Document<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">    <span class="tag">&lt;<span class="name">button</span> <span class="attr">id</span>=<span class="string">&quot;btn&quot;</span>&gt;</span>打开相册<span class="tag">&lt;/<span class="name">button</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">img</span> <span class="attr">id</span>=<span class="string">&quot;img&quot;</span> <span class="attr">width</span>=<span class="string">&quot;200&quot;</span> <span class="attr">height</span>=<span class="string">&quot;200&quot;</span> <span class="attr">src</span>=<span class="string">&quot;&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">const</span> btn = <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;btn&#x27;</span>);</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        btn.<span class="title function_">addEventListener</span>(<span class="string">&#x27;click&#x27;</span>, <span class="keyword">function</span>(<span class="params"></span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            webkit.<span class="property">messageHandlers</span>.<span class="property">showPhotoPicker</span>.<span class="title function_">postMessage</span>(<span class="string">&quot;onGetPhoto&quot;</span>);</span></span><br><span class="line"><span class="language-javascript">        &#125;);</span></span><br><span class="line"><span class="language-javascript"></span></span><br><span class="line"><span class="language-javascript">        <span class="keyword">function</span> <span class="title function_">onGetPhoto</span>(<span class="params">data</span>) &#123;</span></span><br><span class="line"><span class="language-javascript">            <span class="variable language_">document</span>.<span class="title function_">getElementById</span>(<span class="string">&#x27;img&#x27;</span>).<span class="property">src</span> = data;</span></span><br><span class="line"><span class="language-javascript">        &#125;</span></span><br><span class="line"><span class="language-javascript">    </span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此，一个 swift 调用 webview，webview 调用 swift 的简单功能就实现了。</p>
+<p>不同语言之间的交互，由于数据类型不同，有种现实中语言不通的现象，我们只能够简单传递字符串的形式来实现通信。</p>
+<p>因此，如果为了易用性，我们需要设计 SDK，才能在企业中使用，但是通过这个示例，简单了解了原生与 webview 是如何通信的。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgoowwik0006b4opbtup5d6t" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-Leetcode-709-转换成小写字母-看看-ASCII-码的巧妙设计" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" class="article-date">
@@ -112,11 +178,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgk6s8jy0005bioe7ak529pv" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgoowwij0005b4op4hgcetzn" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
 
     </footer>
   </div>
@@ -172,7 +238,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgk6s8k2000abioed7qy7i5m" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgoowwin000cb4opdvmh6vmn" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
       
       
       
@@ -242,7 +308,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgk6s8jz0006bioedgx8c3oq" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgoowwil0009b4opb7p38ber" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
       
       
       
@@ -293,7 +359,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgk6s8jx0004bioe86xsaihx" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgoowwii0004b4op4xet8319" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
       
       
       
@@ -355,7 +421,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgk6s8k8000mbioe2zrmdpa6" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgoowwiu000vb4op3cc1dcmp" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
       
       
       
@@ -425,11 +491,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgk6s8k10009bioecypaf7rx" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgoowwim000ab4opg8ga89yb" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
 
     </footer>
   </div>
@@ -452,7 +518,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
     </div>
   </div>
 
@@ -462,7 +528,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/React-Native/" style="font-size: 20px;">React Native</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Javascript/" style="font-size: 10px;">Javascript</a> <a href="/blog/tags/React-Native/" style="font-size: 20px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a>
     </div>
   </div>
 
@@ -484,6 +550,10 @@
       <ul>
         
           <li>
+            <a href="/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/">Swift 原生应用与 WebView 互相通信</a>
+          </li>
+        
+          <li>
             <a href="/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/">力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计</a>
           </li>
         
@@ -497,10 +567,6 @@
         
           <li>
             <a href="/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/">Element Plus 文档导航效果模仿</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">记一次 RN 第三方组件 react-native-htmlview 问题排查</a>
           </li>
         
       </ul>
