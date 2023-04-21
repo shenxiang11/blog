@@ -209,6 +209,8 @@ export default defineComponent({
 
 一个小技巧是使用 `unref`，如果我们不确定对象是否是一个 `ref`，或者是不想写 `.value`。
 
+到这里，我们的这个应用又能够切换路由显示正确的组件了。
+
 
 ## 总结
 
