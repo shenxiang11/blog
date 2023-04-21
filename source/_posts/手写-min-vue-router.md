@@ -26,7 +26,7 @@ pnpm create vue@3
 
 下面是模版项目的代码，我只对 `import { createRouter } from 'vue-router'` 改成了 `import { createRouter } from '../my-router'`，以及注释了 history 那一行。
 
-在我的版本中，这次就只实现一下 history 模式的 路由。
+在我的版本中，这次就只实现一下 history 模式的路由，所以不需要接收路由模式。
 
 可以看到，现在和原本应用有关系的地方是 `createRouter` 方法。
 
@@ -79,7 +79,7 @@ app.mount('#app')
 
 简单总结就是，我们的 `router` 对象上需要一个 `install` 方法，调用 `use` 的 `app` 会作为第一个参数传给我们。
 
-用过 vue-router 都会比较清楚，它提供了两个内置组件，RouterLink 和 RouterView，我们就可以在这个时候去注册这两个组件。
+用过 vue-router 都会比较清楚，它提供了两个内置组件，`RouterLink` 和 `RouterView`，我们就可以在这个时候去注册这两个组件。
 
 ```js
 import RouterLink from "./RouterLink";
@@ -110,13 +110,15 @@ export function createRouter(options) {
 }
 ```
 
-应为前面说我们实现的是 history 的模式，所以这里额外有一个对 `popstate` 的监听，这是对后退的监听，我们将跳转的路径绑定到 `router` 的 `current` 属性上。
+因为前面说我们实现的是 history 的模式，所以这里额外有一个对 `popstate` 的监听，这是对浏览器后退的监听，我们将跳转的路径绑定到 `router` 的 `current` 属性上。
+
+额外提一句，如果是实现 hash 模式，在这里监听 `hashChange` 就可以，不需要在 `RouterLink` 中监听点击，会更容易实现。
 
 注意这里使用了 `ref`，我希望它是响应式的，这会在 `router-view` 中用到。
 
 同时，我将业务注册的 `routes`，即 `Home` 和 `About`，直接放到了 `router` 上，后面也会在 `router-view` 中用到。
 
-最后，router 自身也通过 `app.config.globalProperties.$router` 的形式放到了 app 上，我们使用 current 的时候需要从这里取出。
+最后，router 自身也通过 `app.config.globalProperties.$router` 的形式放到了 app 上，我们使用 `current` 的时候需要从这里取出。
 
 
 ## 编写 RouterLink 代码
@@ -159,9 +161,9 @@ export default defineComponent({
 })
 ```
 
-跳转时，我们禁用默认行为，该用 `pushState` 跳转，`pushState` 的第一个参数，会在 popState 时获得，所以它也需要记录 `to` 这个参数。
+跳转时，我们禁用默认行为，该用 `pushState` 跳转，`pushState` 的第一个参数，会在 `popState` 时获得，所以它也需要记录 `to` 这个参数。
 
-上一节提到的 current，我们以 `app.proxy.$router.current` 这个形式获得，在 `setup` 里可以这么获取，但是翻了官网没有看到这部分内容，后续可以再跟进一下。
+上一节提到的 `current`，我们以 `app.proxy.$router.current` 这个形式获得，在 `setup` 里可以这么获取，但是翻了官网没有看到这部分内容，后续可以再跟进一下。
 
 
 ## 编写 RouterView 代码
@@ -201,13 +203,13 @@ export default defineComponent({
 
 `RouterView` 的功能就是选择匹配的组件进行展示，如果我们得到了组件，直接传递给 `h` 函数就能渲染。
 
-特别地，About 在这里是一个异步组件，我们需要先调用 `defineAsyncComponent`。
+特别地，`About` 在这里是一个异步组件，我们需要先调用 `defineAsyncComponent`。
 
 匹配的逻辑，在这里就是一个依据 `current` 简单的在数组中的查找，没有支持嵌套的逻辑。
 
 正应为 `current` 是响应式的，我们路由在切换时，我们也能够切换组件。
 
-一个小技巧是使用 `unref`，如果我们不确定对象是否是一个 `ref`，或者是不想写 `.value`。
+一个小技巧是使用 `unref`，如果我们不确定对象是否是一个 `ref`，或者是不想写 `.value` 时可以使用。
 
 到这里，我们的这个应用又能够切换路由显示正确的组件了。
 
