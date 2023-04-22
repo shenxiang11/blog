@@ -71,6 +71,70 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Flutter-与-iOS-通信-BasicMessageChannel" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" class="article-date">
+  <time class="dt-published" datetime="2023-04-22T12:05:00.000Z" itemprop="datePublished">2023-04-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/">Flutter 与 iOS 通信: BasicMessageChannel</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><code>BasicMessageChannel</code> 是适合在 Flutter 和原生端，用于传递字符串和半结构化信息的通信方式。</p>
+<h2 id="Flutter-代码"><a href="#Flutter-代码" class="headerlink" title="Flutter 代码"></a>Flutter 代码</h2><p>为了方便，我们直接使用 Android Studio 创建 Flutter 工程，Swift 部分也使用工程创建出来的 iOS 目录即可。</p>
+<p>为了简单，我们的演示以传递字符串为例。</p>
+<p>下面的代码是基于官方计数器 DEMO 修改而来，删除了注释内容，补充了 <code>BasicMessageChannel</code> 部分代码，主要关注 <code>_MyHomePageState</code> 的 <code>initState</code> 内部的 <code>setMessageHandler</code> 和后面的 <code>_sendMessage</code> 方法。</p>
+<p>前者是处理原生端发送过来的消息，并且还可以回复一条消息给原生端。</p>
+<p>后者是向原生端发送消息，并且可以接收到原生端对于这一条消息的回复。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">import &#x27;package:flutter/material.dart&#x27;;</span><br><span class="line">import &#x27;package:flutter/services.dart&#x27;;</span><br><span class="line"></span><br><span class="line">void main() &#123;</span><br><span class="line">  runApp(const MyApp());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class MyApp extends StatelessWidget &#123;</span><br><span class="line">  const MyApp(&#123;Key? key&#125;) : super(key: key);</span><br><span class="line"></span><br><span class="line">  @override</span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    return MaterialApp(</span><br><span class="line">      title: &#x27;Flutter Demo&#x27;,</span><br><span class="line">      theme: ThemeData(</span><br><span class="line">        primarySwatch: Colors.blue,</span><br><span class="line">      ),</span><br><span class="line">      home: const MyHomePage(title: &#x27;Flutter Demo Home Page&#x27;),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class MyHomePage extends StatefulWidget &#123;</span><br><span class="line">  const MyHomePage(&#123;Key? key, required this.title&#125;) : super(key: key);</span><br><span class="line">  </span><br><span class="line">  final String title;</span><br><span class="line"></span><br><span class="line">  @override</span><br><span class="line">  State&lt;MyHomePage&gt; createState() =&gt; _MyHomePageState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class _MyHomePageState extends State&lt;MyHomePage&gt; &#123;</span><br><span class="line">  static const _channel = BasicMessageChannel(&quot;dev.basicMessageChannel&quot;, StringCodec());</span><br><span class="line"></span><br><span class="line">  @override</span><br><span class="line">  void initState() &#123;</span><br><span class="line">    super.initState();</span><br><span class="line"></span><br><span class="line">    _channel.setMessageHandler((message) async &#123;</span><br><span class="line">      print(&quot;1. flutter receive: $message&quot;);</span><br><span class="line">      return &quot;2. flutter reply receive&quot;;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  Future&lt;void&gt; _sendMessage() async &#123;</span><br><span class="line">    var message = await _channel.send(&quot;3. flutter send&quot;);</span><br><span class="line">    print(&quot;4. flutter receive swift reply ：$message&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  @override</span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    return Scaffold(</span><br><span class="line">      appBar: AppBar(</span><br><span class="line">        title: Text(widget.title),</span><br><span class="line">      ),</span><br><span class="line">      body: Center(</span><br><span class="line">        child: Column(</span><br><span class="line">          mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">      floatingActionButton: FloatingActionButton(</span><br><span class="line">        onPressed: _sendMessage,</span><br><span class="line">        tooltip: &#x27;Increment&#x27;,</span><br><span class="line">        child: Text(&quot;Send&quot;),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Swift-代码"><a href="#Swift-代码" class="headerlink" title="Swift 代码"></a>Swift 代码</h2><p>这部分，<code>setMessageHandler</code> 同样是接收 flutter 发送过来的消息并回复。</p>
+<p>项目启动 5s 后，主动向 flutter 发送一条消息，并且在回调中接收 flutter 对于这条消息的回复。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> Flutter</span><br><span class="line"></span><br><span class="line"><span class="keyword">@UIApplicationMain</span></span><br><span class="line"><span class="keyword">@objc</span> <span class="keyword">class</span> <span class="title class_">AppDelegate</span>: <span class="title class_">FlutterAppDelegate</span> &#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">application</span>(</span><br><span class="line">    <span class="keyword">_</span> <span class="params">application</span>: <span class="type">UIApplication</span>,</span><br><span class="line">    <span class="params">didFinishLaunchingWithOptions</span> <span class="params">launchOptions</span>: [<span class="type">UIApplication</span>.<span class="params">LaunchOptionsKey</span>: <span class="keyword">Any</span>]<span class="operator">?</span></span><br><span class="line">  ) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">let</span> controller: <span class="type">FlutterViewController</span> <span class="operator">=</span> window<span class="operator">?</span>.rootViewController <span class="keyword">as!</span> <span class="type">FlutterViewController</span></span><br><span class="line">      <span class="keyword">let</span> basicMessageChannel <span class="operator">=</span> <span class="type">FlutterBasicMessageChannel</span>(name: <span class="string">&quot;dev.basicMessageChannel&quot;</span>, binaryMessenger: controller.binaryMessenger, codec: <span class="type">FlutterStringCodec</span>.sharedInstance())</span><br><span class="line"></span><br><span class="line">      basicMessageChannel.setMessageHandler &#123; message, reply <span class="keyword">in</span></span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;5. swift receive：<span class="subst">\(message)</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">          reply(<span class="string">&quot;6. swift reply: <span class="subst">\(message)</span>&quot;</span>)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="type">DispatchQueue</span>.main.asyncAfter(deadline: .now() <span class="operator">+</span> <span class="number">5.0</span>) &#123;</span><br><span class="line">          basicMessageChannel.sendMessage(<span class="string">&quot;7. swift send&quot;</span>) &#123; message <span class="keyword">in</span></span><br><span class="line">              <span class="built_in">print</span>(<span class="string">&quot;8. swift receive flutter reply: <span class="subst">\(message)</span>&quot;</span>)</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="type">GeneratedPluginRegistrant</span>.register(with: <span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.application(application, didFinishLaunchingWithOptions: launchOptions)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="运行起来"><a href="#运行起来" class="headerlink" title="运行起来"></a>运行起来</h2><p>由于修改了原生代码，我们需要执行 <code>flutter clean</code>，先用 flutter 把它运行起来，但是这样看不到原生端的日志。</p>
+<p>又一个小技巧是我们后续从 xcode 启动项目，这样两端的日志我们都能看到。</p>
+<p>下面我直接贴出我们项目的日志，前 5s 我们先不要点击按钮，先查看 swift 向 flutter 发送消息的情况，然后我们再点击一次按钮。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flutter: 1. flutter receive: 7. swift send</span><br><span class="line">8. swift receive flutter reply: Optional(2. flutter reply receive)</span><br><span class="line"></span><br><span class="line">5. swift receive：Optional(3. flutter send)</span><br><span class="line">4. flutter receive swift reply ：6. swift reply: Optional(3. flutter send)</span><br></pre></td></tr></table></figure>
+
+<p>前 5s 原生发送了一条消息，所以第一条日志是 flutter 接收到了 swift 发送的消息。</p>
+<p>随后 flutter 对消息做了回复，第二条日志表示 swift 接收到了 flutter 的回复消息。</p>
+<p>点击按钮后，flutter 发送了一个消息，swift 接收到了。</p>
+<p>最后，flutter 接收到了 swift 的回复消息。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>BasicMessageChannel</code> 是 Flutter 与原生最简单的通信方式，但它只能用于传递字符串和半结构化的信息，后面我们继续探索其他通信方式。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clgrhay5q0004buop43lm5vu7" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-手写-min-vue-router" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" class="article-date">
@@ -139,7 +203,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clgq0rgvx000gbvoz0womdxpc" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clgrhay60000hbuop3steh094" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
@@ -232,7 +296,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgq0rgvm0006bvozepei825c" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgrhay5u0009buophlse630v" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
       
       
       
@@ -298,11 +362,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgq0rgvl0005bvoz2gz1g6ms" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgrhay5s0006buop5lcb8r3y" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li></ul>
 
     </footer>
   </div>
@@ -353,7 +417,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgq0rgvj0004bvoz7j0y6jfl" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgrhay5r0005buop1z1ratxk" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
@@ -413,7 +477,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgq0rgvs000cbvozc8g004kw" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgrhay5x000ebuop1apr3z03" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
       
       
       
@@ -483,11 +547,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgq0rgvp0009bvozccrpbxy6" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgrhay5v000abuop0jwa52at" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li></ul>
 
     </footer>
   </div>
@@ -534,7 +598,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgq0rgvf0002bvoz9mukcesk" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgrhay5o0002buop3pcrcfgz" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
       
       
       
@@ -582,7 +646,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" data-id="clgq0rgvu000ebvoz6mk78zyt" data-title="常用的术语及英文缩写（不定期更新）" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" data-id="clgrhay5z000gbuop2gmdgxq2" data-title="常用的术语及英文缩写（不定期更新）" class="article-share-link">Teilen</a>
       
       
       
@@ -644,7 +708,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgq0rgw90013bvoz5jtz2ggu" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgrhay61000jbuopadwk38zx" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
       
       
       
@@ -658,77 +722,12 @@
 
 
   
-    <article id="post-冒泡排序" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" class="article-date">
-  <time class="dt-published" datetime="2023-04-09T12:33:22.000Z" itemprop="datePublished">2023-04-09</time>
-</a>
+
+
+  <nav id="page-nav">
     
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/">经典排序算法之冒泡排序：我的冒泡排序有什么问题</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <p>力扣 912 题（排序数组），是一道适合练习各种排序方式的题。今天本想把部分排序算法一一实现一下，结果发现刚写冒泡就出问题了。</p>
-<p>为了加深印象，我做了两个个违背<del>祖宗</del>懒惰的决定，一是一定要重新拾起写博客的习惯，二是用 Canvas 把排序算法做成动画。</p>
-<hr>
-<h2 id="我的错误版本"><a href="#我的错误版本" class="headerlink" title="我的错误版本"></a>我的错误版本</h2><p>首先，看下我的错误版本的代码：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">sortArray</span>(<span class="params">nums: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span>[] &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;nums.<span class="property">length</span>-<span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j=i+<span class="number">1</span>; j&lt;nums.<span class="property">length</span>; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; nums[j]) &#123;</span><br><span class="line">                [nums[i], nums[j]] = [nums[j], nums[i]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> nums;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>配上我做的动画：</p>
-<p><img src="/blog/resources/2023-04-09/01.gif"></p>
-<p>动画中，前两轮的逻辑我已经标注出来了，可以看出该算法的基本逻辑是，从每轮找出第 i 小的数，放到 i 的位置，最小值确实也是”冒泡”到了前面。<br>可以看出我这个实际上不是冒泡，而是有点接近选择排序，选择排序是找出最小值后，在一轮循环结束后再进行交换。<br>而我的这个算法，是每次遇到较小值后就进行交换，因此，我的算法不如选择排序。</p>
-<h2 id="它比真正的冒泡排序好吗？"><a href="#它比真正的冒泡排序好吗？" class="headerlink" title="它比真正的冒泡排序好吗？"></a>它比真正的冒泡排序好吗？</h2><p>如果你注意到动画的最后一帧，注意看我特意设置的重复项来验证排序是否稳定，原本 480’ 是排在 480 后面的，但是在完成排序后，480’ 反而跑到了相对前面的位置。</p>
-<p>这是由于在和较小值交换时，前面的 480 就有可能被交换到 480’ 的后面，从而相对顺序被破坏。</p>
-<p>而我们知道，冒泡排序是稳定的，因为冒泡排序中，只有左边的数字大于右边的数字时才会发生交换，相等的数字之间不会发生交换，所以它是稳定的。</p>
-<p>所以，我的错误写法还丢失了冒泡排序的稳定的优势。</p>
-<p>复杂度方面，同样的实际复杂度，交换的次数也是一样的，所以我的算法没有任何意义。</p>
-<h2 id="正确写法"><a href="#正确写法" class="headerlink" title="正确写法"></a>正确写法</h2><p>我们可以先查询一下维基百科对冒泡排序算法的描述：</p>
-<ol>
-<li>比较相邻的元素。如果第一个比第二个大，就交换它们两个。</li>
-<li>对每一对相邻元素作同样的工作，从开始第一对到结尾的最后一对。这步做完后，最后的元素会是最大的数。</li>
-<li>针对所有的元素重复以上的步骤，除了最后一个。 </li>
-<li>持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较。</li>
-</ol>
-<p>由此给出实现并不困难：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">sortArray</span>(<span class="params">nums: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span>[] &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;nums.<span class="property">length</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j=<span class="number">0</span>; j&lt;nums.<span class="property">length</span>-<span class="number">1</span>-i; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[j] &gt; nums[j+<span class="number">1</span>]) &#123;</span><br><span class="line">                [nums[j], nums[j+<span class="number">1</span>]] = [nums[j+<span class="number">1</span>], nums[j]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> nums;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>动画是这样的：</p>
-<p><img src="/blog/resources/2023-04-09/02.gif"></p>
-<p>可以从图中看出，每一轮结束，是最大值会出现在正确的位置。而且相同的元素的相对位置是正确的。</p>
-<h2 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h2><p>从两种实现来看，代码太像了，我原本的解法估计是看网上某处学来的，本质还是自己理解的不到位。</p>
-<p>如果面试遇到这种简单排序，写完发现结果是正确的，很容易认为自己的算法是正确的，会非常危险。</p>
-<p>所以网上学东西还是需要注意，更倾向于去看一些权威的资料，更要有自己的理解。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgq0rgvq000abvozhnb5310n" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-
+    <span class="page-number current">1</span><a class="page-number" href="/blog/page/2/">2</a><a class="extend next" rel="next" href="/blog/page/2/">weiter &raquo;</a>
+  </nav>
 
 </section>
         
@@ -741,7 +740,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
     </div>
   </div>
 
@@ -751,7 +750,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Javascript/" style="font-size: 20px;">Javascript</a> <a href="/blog/tags/React-Native/" style="font-size: 20px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 10px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 20px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 10px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 15px;">Javascript</a> <a href="/blog/tags/React-Native/" style="font-size: 15px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
     </div>
   </div>
 
@@ -773,6 +772,10 @@
       <ul>
         
           <li>
+            <a href="/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/">Flutter 与 iOS 通信: BasicMessageChannel</a>
+          </li>
+        
+          <li>
             <a href="/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/">手写 min-vue-router</a>
           </li>
         
@@ -786,10 +789,6 @@
         
           <li>
             <a href="/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/">力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/">如何命名 ts 中的类型</a>
           </li>
         
       </ul>
