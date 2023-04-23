@@ -103,14 +103,15 @@
 <figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> Flutter</span><br><span class="line"></span><br><span class="line"><span class="keyword">@UIApplicationMain</span></span><br><span class="line"><span class="keyword">@objc</span> <span class="keyword">class</span> <span class="title class_">AppDelegate</span>: <span class="title class_">FlutterAppDelegate</span> &#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">application</span>(</span><br><span class="line">    <span class="keyword">_</span> <span class="params">application</span>: <span class="type">UIApplication</span>,</span><br><span class="line">    <span class="params">didFinishLaunchingWithOptions</span> <span class="params">launchOptions</span>: [<span class="type">UIApplication</span>.<span class="params">LaunchOptionsKey</span>: <span class="keyword">Any</span>]<span class="operator">?</span></span><br><span class="line">  ) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">let</span> controller: <span class="type">FlutterViewController</span> <span class="operator">=</span> window<span class="operator">?</span>.rootViewController <span class="keyword">as!</span> <span class="type">FlutterViewController</span></span><br><span class="line">      <span class="keyword">let</span> batteryChannel <span class="operator">=</span> <span class="type">FlutterMethodChannel</span>(name: <span class="string">&quot;dev.battery.MethodChannel&quot;</span>, binaryMessenger: controller.binaryMessenger)</span><br><span class="line"></span><br><span class="line">      batteryChannel.setMethodCallHandler &#123; call, result <span class="keyword">in</span></span><br><span class="line">          <span class="keyword">guard</span> call.method <span class="operator">==</span> <span class="string">&quot;getBatteryLevel&quot;</span> <span class="keyword">else</span> &#123;</span><br><span class="line">              result(<span class="type">FlutterMethodNotImplemented</span>)</span><br><span class="line">              <span class="keyword">return</span></span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">          <span class="keyword">self</span>.receiveBatteryLevel(result: result)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="type">GeneratedPluginRegistrant</span>.register(with: <span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.application(application, didFinishLaunchingWithOptions: launchOptions)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">func</span> <span class="title function_">receiveBatteryLevel</span>(<span class="params">result</span>: <span class="type">FlutterResult</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> device <span class="operator">=</span> <span class="type">UIDevice</span>.current</span><br><span class="line">        device.isBatteryMonitoringEnabled <span class="operator">=</span> <span class="literal">true</span></span><br><span class="line">        <span class="keyword">if</span> device.batteryState <span class="operator">==</span> <span class="type">UIDevice</span>.<span class="type">BatteryState</span>.unknown &#123;</span><br><span class="line">            result(<span class="type">FlutterError</span>(code: <span class="string">&quot;UNAVALIABLE&quot;</span>, message: <span class="string">&quot;Battery level not available.&quot;</span>, details: <span class="literal">nil</span>))</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            result(<span class="type">Int</span>(device.batteryLevel <span class="operator">*</span> <span class="number">100</span>))</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h2><p>由于获取电量需要真机运行，特意录了屏。</p>
-<p><img src="//resources/2023-04/08.gif"></p>
+<p><img src="/blog/resources/2023-04/08.gif"></p>
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Flutter 的项目，原生端可以创建 Swift 类型的项目，文档的代码也很详细，这太友好了。iOS 都主推 swift 和 swiftUI 了， RN 却依然只能创建 oc 项目。</p>
 <p>掌握了 <code>MethodChannel</code> 的通信方式，就能满足日常的开发需求了。</p>
+<p>觉得 Flutter 的通信 api 设计的很好，简单易学，之前我自己探索的原生与 webview 的通信还是比较复杂的，传递的信息感觉不是很方便，后续继续去探索学习看看是否有更好的方法。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clgsteclr0005c4org423ewhn" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clgstihkq0005cfov7ry8c6mg" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -174,7 +175,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clgsteclq0004c4or4viu9zp5" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clgstihkp0004cfovg77n2n6n" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -256,7 +257,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clgstecm1000jc4orghm4ggan" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clgstihlb001icfov12pf205d" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
@@ -349,7 +350,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgsteclv000ac4orgejx3o8u" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgstihkt000acfovf9k52i76" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
       
       
       
@@ -415,7 +416,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgsteclu0009c4orayog2xpu" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgstihks0009cfov0qpe8g0r" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
@@ -470,7 +471,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgstecls0006c4orerjk9skv" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgstihkr0006cfov7m609n7l" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
@@ -530,7 +531,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgsteclz000gc4ordu1wecim" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgstihkx000gcfovb5ljhyvg" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
       
       
       
@@ -600,7 +601,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgsteclw000cc4or9pz2g6a0" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgstihku000ccfovfdu3e4ie" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
       
       
       
@@ -651,7 +652,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgsteclo0002c4or4s998vld" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgstihkn0002cfovak338wa2" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
       
       
       
@@ -699,7 +700,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" data-id="clgstecm0000hc4orf8ladh39" data-title="常用的术语及英文缩写（不定期更新）" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" data-id="clgstihky000hcfov56l21j6d" data-title="常用的术语及英文缩写（不定期更新）" class="article-share-link">Teilen</a>
       
       
       
