@@ -71,6 +71,68 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-记一次-RN-第三方组件问题排查" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" class="article-date">
+  <time class="dt-published" datetime="2023-04-11T18:20:00.000Z" itemprop="datePublished">2023-04-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/">记一次 RN 第三方组件 react-native-htmlview 问题排查</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="问题复现"><a href="#问题复现" class="headerlink" title="问题复现"></a>问题复现</h2><p>在 Shopee Food App 商家端开发时，遇到一个奇怪的问题：RN 开发的 app 页面中的富文本图片，会显示不出来，显示成一个模糊不清的图片。</p>
+<p>神奇的是，这不是一个必现的问题，当时排查了很久，终于找到了问题发生的地方。</p>
+<h2 id="问题排查"><a href="#问题排查" class="headerlink" title="问题排查"></a>问题排查</h2><p>首先，我是没有任何头绪的，只能观察家在失败的不同图片，首先发现这些图片虽然模糊不清，但是它们的色彩是和原图相关的。</p>
+<p>再仔细观察，会发现这个模糊效果似乎就是 iOS 端使用 <code>UIVisualEffectView</code> 实现的我们常说的“毛玻璃”效果。</p>
+<p>我可以确定的是，我们的代码逻辑没有这种增加模糊效果，随后我便决定去排查呈现这个富文本内容的第三方组件库 ———— react-native-htmlview。</p>
+<p>这个组件库中呈现图片使用的是它内部实现的 <code>AutoSizedImage</code> 组件，它也并没有多少逻辑，更没有看到有加模糊效果的代码。</p>
+<p>代码如下，值得注意的是初始化部分，作者将图片初始宽高设置为了 1x1 的大小：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">React</span>, &#123;<span class="title class_">PureComponent</span>&#125; <span class="keyword">from</span> <span class="string">&#x27;react&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;</span><br><span class="line">  <span class="title class_">Image</span>,</span><br><span class="line">  <span class="title class_">Dimensions</span>,</span><br><span class="line">&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> &#123;width&#125; = <span class="title class_">Dimensions</span>.<span class="title function_">get</span>(<span class="string">&#x27;window&#x27;</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> baseStyle = &#123;</span><br><span class="line">  <span class="attr">backgroundColor</span>: <span class="string">&#x27;transparent&#x27;</span>,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="keyword">class</span> <span class="title class_">AutoSizedImage</span> <span class="keyword">extends</span> <span class="title class_ inherited__">PureComponent</span> &#123;</span><br><span class="line">  <span class="title function_">constructor</span>(<span class="params">props</span>) &#123;</span><br><span class="line">    <span class="variable language_">super</span>(props);</span><br><span class="line">    <span class="variable language_">this</span>.<span class="property">state</span> = &#123;</span><br><span class="line">      <span class="comment">// set width 1 is for preventing the warning</span></span><br><span class="line">      <span class="comment">// You must specify a width and height for the image %s</span></span><br><span class="line">      <span class="attr">width</span>: <span class="variable language_">this</span>.<span class="property">props</span>.<span class="property">style</span>.<span class="property">width</span> || <span class="number">1</span>,</span><br><span class="line">      <span class="attr">height</span>: <span class="variable language_">this</span>.<span class="property">props</span>.<span class="property">style</span>.<span class="property">height</span> || <span class="number">1</span>,</span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">componentDidMount</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="comment">//avoid repaint if width/height is given</span></span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">props</span>.<span class="property">style</span>.<span class="property">width</span> || <span class="variable language_">this</span>.<span class="property">props</span>.<span class="property">style</span>.<span class="property">height</span>) &#123;</span><br><span class="line">      <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="title class_">Image</span>.<span class="title function_">getSize</span>(<span class="variable language_">this</span>.<span class="property">props</span>.<span class="property">source</span>.<span class="property">uri</span>, <span class="function">(<span class="params">w, h</span>) =&gt;</span> &#123;</span><br><span class="line">      <span class="variable language_">this</span>.<span class="title function_">setState</span>(&#123;<span class="attr">width</span>: w, <span class="attr">height</span>: h&#125;);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="title function_">render</span>(<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> finalSize = &#123;&#125;;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">width</span> &gt; width) &#123;</span><br><span class="line">      finalSize.<span class="property">width</span> = width;</span><br><span class="line">      <span class="keyword">const</span> ratio = width / <span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">width</span>;</span><br><span class="line">      finalSize.<span class="property">height</span> = <span class="variable language_">this</span>.<span class="property">state</span>.<span class="property">height</span> * ratio;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> style = <span class="title class_">Object</span>.<span class="title function_">assign</span>(</span><br><span class="line">      baseStyle,</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">props</span>.<span class="property">style</span>,</span><br><span class="line">      <span class="variable language_">this</span>.<span class="property">state</span>,</span><br><span class="line">      finalSize</span><br><span class="line">    );</span><br><span class="line">    <span class="keyword">let</span> source = &#123;&#125;;</span><br><span class="line">    <span class="keyword">if</span> (!finalSize.<span class="property">width</span> || !finalSize.<span class="property">height</span>) &#123;</span><br><span class="line">      source = <span class="title class_">Object</span>.<span class="title function_">assign</span>(source, <span class="variable language_">this</span>.<span class="property">props</span>.<span class="property">source</span>, <span class="variable language_">this</span>.<span class="property">state</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      source = <span class="title class_">Object</span>.<span class="title function_">assign</span>(source, <span class="variable language_">this</span>.<span class="property">props</span>.<span class="property">source</span>, finalSize);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="language-xml"><span class="tag">&lt;<span class="name">Image</span> <span class="attr">style</span>=<span class="string">&#123;style&#125;</span> <span class="attr">source</span>=<span class="string">&#123;source&#125;</span> /&gt;</span></span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>AutoSizedImage</code> 代码没有问题，那难道是 RN 的 <code>Image</code> 的问题？</p>
+<p>图片设置 1x1 是因为没有经过网络加载，我们不能知道图片的真实尺寸，在加载完图片后，我们重新设置正确的尺寸。</p>
+<p>这个照平常来说没有什么问题，但实在没有其他的可排查的点了，所以我只能在 RN <code>Image</code> 组件上做实验，显示一张图片和一个 slider，通过 slider 不断去修改图片尺寸。</p>
+<p>果然，项目中一样的问题发生了，图片会从清楚变模糊，并且有概率不能正确显示。</p>
+<p>后来我使用 swift 原生，做了一摸一样的实验，没有这个现象，猜测这是 RN 这边实现的效果。</p>
+<p>(在几个月后，我重新试了一下，这个问题在新版本已经不存在了，自己这边的模拟器等环境已经升级到 iOS 16 了，无法还原当时的开发环境了。但是当时在公司的开发机和自己的电脑上都复现出了这个问题。)</p>
+<h2 id="问题解决"><a href="#问题解决" class="headerlink" title="问题解决"></a>问题解决</h2><p>知道了规律，解决也变得容易了，该组件库支持我们自己定义富文本各种标签的渲染方式，我们只需重写一个新的 <code>AutoImageView</code>。</p>
+<p>原本版本中，图片尺寸发生骤变的地方就是从初始化的 1x1, 到网络加载图片后重新按图片真实尺寸比例重新渲染。</p>
+<p>1x1 的大小其实是没有意义的，用户也看不见，我们在新组件中实现成加载前渲染一个空组件，最后网络加载图片完成后，再让图片按真实尺寸渲染。</p>
+<p>最后，经测试，修改后问题得以解决。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>RN 的发展非常快，其实这个组件库虽然有超过 2000+ 的 star，但是作者已经很久不维护了，提 issue 等作者修复可能等不到了。</p>
+<p>还好，作者有提供自定义渲染的方式让我们无需需改他的代码，当时正面临 9.9 大促，不然很有可能耽误开发上线的时间。</p>
+<p>这个组件库另外一个问题是，默认样式不是很好看，如文本行间距非常地不自然，这又是另一个问题了，下次有机会再分享。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgstecm1000kc4orfnu58693" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-冒泡排序" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" class="article-date">
@@ -127,7 +189,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgrhay5w000cbuop4b6yfexe" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgsteclx000ec4orcmkk1lqu" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
       
       
       
@@ -169,7 +231,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 10px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 15px;">Javascript</a> <a href="/blog/tags/React-Native/" style="font-size: 15px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 15px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 15px;">Javascript</a> <a href="/blog/tags/React-Native/" style="font-size: 15px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
     </div>
   </div>
 
@@ -191,6 +253,10 @@
       <ul>
         
           <li>
+            <a href="/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/">Flutter 与 iOS 通信：MethodChannel</a>
+          </li>
+        
+          <li>
             <a href="/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/">Flutter 与 iOS 通信: BasicMessageChannel</a>
           </li>
         
@@ -204,10 +270,6 @@
         
           <li>
             <a href="/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/">Swift 原生应用与 WebView 互相通信</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/">力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计</a>
           </li>
         
       </ul>
