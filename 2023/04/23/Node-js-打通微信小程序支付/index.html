@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>Node.js 打通微信小程序支付 | 前端芯事</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="前言支付是电商最重要的一个环节，在小程序中前端基本只需要调用 api 即可，一些重要逻辑是放在后端的，且不是每一个开发都会接触这一块内容。 这次借用到了企业支付的资质，就实践一下支付并记录此过程。 完成后，可以在小程序中成功唤起支付，并在以后应用到项目里。  准备小程序前端我们只需要在官方示例项目里添加网络请求，然后把请求结果的必要参数传递给 requestPayment 即可。 12345678">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Node.js 打通微信小程序支付">
+<meta property="og:url" content="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/index.html">
+<meta property="og:site_name" content="前端芯事">
+<meta property="og:description" content="前言支付是电商最重要的一个环节，在小程序中前端基本只需要调用 api 即可，一些重要逻辑是放在后端的，且不是每一个开发都会接触这一块内容。 这次借用到了企业支付的资质，就实践一下支付并记录此过程。 完成后，可以在小程序中成功唤起支付，并在以后应用到项目里。  准备小程序前端我们只需要在官方示例项目里添加网络请求，然后把请求结果的必要参数传递给 requestPayment 即可。 12345678">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-04/09.gif">
+<meta property="article:published_time" content="2023-04-23T14:25:08.000Z">
+<meta property="article:modified_time" content="2023-04-23T06:47:16.696Z">
+<meta property="article:author" content="芯芯爸爸">
+<meta property="article:tag" content="微信小程序">
+<meta property="article:tag" content="Node.js">
+<meta property="article:tag" content="Javascript">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shenxiang11.github.io/blog/resources/2023-04/09.gif">
+  
+    <link rel="alternate" href="/blog/atom.xml" title="前端芯事" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/blog/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/blog/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/blog/" id="logo">前端芯事</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/blog/">Home</a>
+        
+          <a class="main-nav-link" href="/blog/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/blog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://shenxiang11.github.io/blog"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-Node-js-打通微信小程序支付" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" class="article-date">
+  <time class="dt-published" datetime="2023-04-23T14:25:08.000Z" itemprop="datePublished">2023-04-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      Node.js 打通微信小程序支付
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>支付是电商最重要的一个环节，在小程序中前端基本只需要调用 api 即可，一些重要逻辑是放在后端的，且不是每一个开发都会接触这一块内容。</p>
+<p>这次借用到了企业支付的资质，就实践一下支付并记录此过程。</p>
+<p>完成后，可以在小程序中成功唤起支付，并在以后应用到项目里。</p>
+<p><img src="/blog/resources/2023-04/09.gif"></p>
+<h2 id="准备小程序前端"><a href="#准备小程序前端" class="headerlink" title="准备小程序前端"></a>准备小程序前端</h2><p>我们只需要在官方示例项目里添加网络请求，然后把请求结果的必要参数传递给 <code>requestPayment</code> 即可。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="comment">// 获取应用实例</span></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">getApp</span>()</span><br><span class="line"></span><br><span class="line"><span class="title class_">Page</span>(&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="title function_">handlePay</span>(<span class="params"></span>) &#123;</span><br><span class="line">    wx.<span class="title function_">request</span>(&#123;</span><br><span class="line">      <span class="attr">url</span>: <span class="string">&#x27;http://192.168.1.3:3000/pay&#x27;</span>,</span><br><span class="line">      <span class="title function_">success</span>(<span class="params">res</span>) &#123;</span><br><span class="line">        wx.<span class="title function_">requestPayment</span>(&#123;</span><br><span class="line">          <span class="attr">nonceStr</span>: res.<span class="property">data</span>.<span class="property">nonceStr</span>,</span><br><span class="line">          <span class="attr">package</span>: res.<span class="property">data</span>.<span class="property">package</span>,</span><br><span class="line">          <span class="attr">signType</span>: res.<span class="property">data</span>.<span class="property">signType</span>,</span><br><span class="line">          <span class="attr">paySign</span>: res.<span class="property">data</span>.<span class="property">paySign</span>,</span><br><span class="line">          <span class="attr">timeStamp</span>: res.<span class="property">data</span>.<span class="property">timeStamp</span>,</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="支付后端"><a href="#支付后端" class="headerlink" title="支付后端"></a>支付后端</h2><p>这里我就简单使用了 koa 作为支付后端，并且简单到不需要使用路由功能。</p>
+<p>登录我也不打算作，我自己的 openid 在以前我测试这个小程序的时候获取过，我记录了下来直接使用，在下面代码里我隐去了。</p>
+<p>同时我把一些敏感信息一并隐去了，如：商户 id，支付密钥等。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Koa</span> = <span class="built_in">require</span>(<span class="string">&#x27;koa&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> axios = <span class="built_in">require</span>(<span class="string">&#x27;axios&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> md5 = <span class="built_in">require</span>(<span class="string">&#x27;md5&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> &#123;js2xml, xml2js&#125; = <span class="built_in">require</span>(<span class="string">&#x27;xml-js&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> <span class="title class_">Koa</span>()</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(<span class="keyword">async</span> ctx =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> dict = &#123;</span><br><span class="line">    <span class="attr">xml</span>: &#123;</span><br><span class="line">      <span class="attr">body</span>: <span class="string">&#x27;JSAPI支付测试&#x27;</span>,</span><br><span class="line">      <span class="attr">appid</span>: <span class="string">&#x27;你的小程序 id&#x27;</span>,</span><br><span class="line">      <span class="attr">mch_id</span>: <span class="string">&#x27;商户 id&#x27;</span>,</span><br><span class="line">      <span class="attr">nonce_str</span>: <span class="title function_">generateNonceStr</span>(), <span class="comment">// 随机字符串，长度要求在32位以内。调用随机数函数生成，将得到的值转换为字符串</span></span><br><span class="line">      <span class="attr">notify_url</span>: <span class="string">&#x27;http://127.0.0.1/notify&#x27;</span>,</span><br><span class="line">      <span class="attr">openid</span>: <span class="string">&#x27;支付用户的 openid&#x27;</span>, <span class="comment">// 懒得做登录系统了</span></span><br><span class="line">      <span class="attr">out_trade_no</span>: <span class="string">&#x27;3783-6c16-4fab-83ff-6f193d70111&#x27;</span>, <span class="comment">// 商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*且在同一个商户号下唯一</span></span><br><span class="line">      <span class="attr">spbill_create_ip</span>: <span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">      <span class="attr">total_fee</span>: <span class="number">10</span>, <span class="comment">// 订单总金额，单位为分</span></span><br><span class="line">      <span class="attr">trade_type</span>: <span class="string">&#x27;JSAPI&#x27;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> str = <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="title class_">Object</span>.<span class="title function_">keys</span>(dict.<span class="property">xml</span>).<span class="title function_">sort</span>().<span class="title function_">forEach</span>(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (str === <span class="string">&#x27;&#x27;</span>) &#123;</span><br><span class="line">      str += <span class="string">`<span class="subst">$&#123;key&#125;</span>=<span class="subst">$&#123;dict.xml[key]&#125;</span>`</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      str += <span class="string">`&amp;<span class="subst">$&#123;key&#125;</span>=<span class="subst">$&#123;dict.xml[key]&#125;</span>`</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  str += <span class="string">&#x27;&amp;key=&#x27;</span> + <span class="string">&#x27;你的 key&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> sign = <span class="title function_">md5</span>(str)</span><br><span class="line">  dict.<span class="property">xml</span>.<span class="property">sign</span> = sign.<span class="title function_">toUpperCase</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> d = <span class="title function_">js2xml</span>(dict, &#123;<span class="attr">compact</span>: <span class="literal">true</span>, <span class="attr">ignoreComment</span>: <span class="literal">true</span>, <span class="attr">spaces</span>: <span class="number">2</span>&#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> axios.<span class="title function_">post</span>(<span class="string">&#x27;https://api.mch.weixin.qq.com/pay/unifiedorder&#x27;</span>, d, &#123;</span><br><span class="line">    <span class="attr">headers</span>: &#123;</span><br><span class="line">      <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;text/xml&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> data = <span class="title function_">xml2js</span>(res.<span class="property">data</span>, &#123;<span class="attr">compact</span>: <span class="literal">true</span>&#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> clientDict = &#123;</span><br><span class="line">    <span class="attr">appId</span>: <span class="string">&#x27;你的小程序 id&#x27;</span>,</span><br><span class="line">    <span class="attr">timeStamp</span>: <span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Date</span>.<span class="title function_">now</span>()/<span class="number">1000</span>).<span class="title function_">toString</span>(),</span><br><span class="line">    <span class="attr">nonceStr</span>: <span class="title function_">generateNonceStr</span>(),</span><br><span class="line">    <span class="attr">package</span>: <span class="string">&#x27;prepay_id=&#x27;</span> + data.<span class="property">xml</span>.<span class="property">prepay_id</span>.<span class="property">_cdata</span>,</span><br><span class="line">    <span class="attr">signType</span>: <span class="string">&#x27;MD5&#x27;</span>,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  str = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="title class_">Object</span>.<span class="title function_">keys</span>(clientDict).<span class="title function_">sort</span>().<span class="title function_">forEach</span>(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (str === <span class="string">&#x27;&#x27;</span>) &#123;</span><br><span class="line">      str += <span class="string">`<span class="subst">$&#123;key&#125;</span>=<span class="subst">$&#123;clientDict[key]&#125;</span>`</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      str += <span class="string">`&amp;<span class="subst">$&#123;key&#125;</span>=<span class="subst">$&#123;clientDict[key]&#125;</span>`</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  str += <span class="string">&#x27;&amp;key=&#x27;</span> + <span class="string">&#x27;你的 key&#x27;</span></span><br><span class="line">  clientDict.<span class="property">paySign</span> = <span class="title function_">md5</span>(str)</span><br><span class="line"></span><br><span class="line">  ctx.<span class="property">body</span> = clientDict</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">generateNonceStr</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Math</span>.<span class="title function_">random</span>().<span class="title function_">toString</span>().<span class="title function_">slice</span>(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">3000</span>)</span><br></pre></td></tr></table></figure>
+
+<p>代码的大体流程就是准备参数，这里我是将微信文档里标记的必要参数都写了上去了，这应该是最少的参数了。</p>
+<p>后端需要把这些参数传递给后端，其中 <code>sign</code> 是把这些参数按照其 key 的 ASCII 码排序拼接后进行 md5 后得到，再和原本的字段一起传递给微信服务器。</p>
+<p>这里微信的入参和出参都是 xml 格式，我们利用 npm 包来转换成更方便使用的 json。</p>
+<p>我们再把微信给我们的结果，做一样的加密工作，然后把所需参数传递给前端，即 <code>requestPayment</code>。</p>
+<p>到这里，一个极简的支付就完成了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>吐槽一下，不知道为什么，微信至今还是用 xml 作为数据交换，哪怕兼容地加一种 json 方式呢？</p>
+<p>之前，我其实用 java 写过类似的支付，当时整个流程用的现成的 SDK 来做支付，只需要传递必要参数就行，其实这次做完，发现支付其实也只是一个简单请求而已，代码量并不多，盲目用一些包，万一里面有什么恶意的逻辑就不好了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clgt1rfbt0009cgoqf8vk5xfi" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Node-js/" rel="tag">Node.js</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">微信小程序</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">Flutter 与 iOS 通信：MethodChannel</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">微信小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 16.67px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2023/04/">四月 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/">Node.js 打通微信小程序支付</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/">Flutter 与 iOS 通信：MethodChannel</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/">Flutter 与 iOS 通信: BasicMessageChannel</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/">手写 min-vue-router</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/">使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 芯芯爸爸<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/blog/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/blog/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

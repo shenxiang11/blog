@@ -71,6 +71,65 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-Node-js-打通微信小程序支付" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" class="article-date">
+  <time class="dt-published" datetime="2023-04-23T14:25:08.000Z" itemprop="datePublished">2023-04-23</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/">Node.js 打通微信小程序支付</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>支付是电商最重要的一个环节，在小程序中前端基本只需要调用 api 即可，一些重要逻辑是放在后端的，且不是每一个开发都会接触这一块内容。</p>
+<p>这次借用到了企业支付的资质，就实践一下支付并记录此过程。</p>
+<p>完成后，可以在小程序中成功唤起支付，并在以后应用到项目里。</p>
+<p><img src="/blog/resources/2023-04/09.gif"></p>
+<h2 id="准备小程序前端"><a href="#准备小程序前端" class="headerlink" title="准备小程序前端"></a>准备小程序前端</h2><p>我们只需要在官方示例项目里添加网络请求，然后把请求结果的必要参数传递给 <code>requestPayment</code> 即可。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="comment">// 获取应用实例</span></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">getApp</span>()</span><br><span class="line"></span><br><span class="line"><span class="title class_">Page</span>(&#123;</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">  <span class="title function_">handlePay</span>(<span class="params"></span>) &#123;</span><br><span class="line">    wx.<span class="title function_">request</span>(&#123;</span><br><span class="line">      <span class="attr">url</span>: <span class="string">&#x27;http://192.168.1.3:3000/pay&#x27;</span>,</span><br><span class="line">      <span class="title function_">success</span>(<span class="params">res</span>) &#123;</span><br><span class="line">        wx.<span class="title function_">requestPayment</span>(&#123;</span><br><span class="line">          <span class="attr">nonceStr</span>: res.<span class="property">data</span>.<span class="property">nonceStr</span>,</span><br><span class="line">          <span class="attr">package</span>: res.<span class="property">data</span>.<span class="property">package</span>,</span><br><span class="line">          <span class="attr">signType</span>: res.<span class="property">data</span>.<span class="property">signType</span>,</span><br><span class="line">          <span class="attr">paySign</span>: res.<span class="property">data</span>.<span class="property">paySign</span>,</span><br><span class="line">          <span class="attr">timeStamp</span>: res.<span class="property">data</span>.<span class="property">timeStamp</span>,</span><br><span class="line">        &#125;)</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;)</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="comment">// ...</span></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h2 id="支付后端"><a href="#支付后端" class="headerlink" title="支付后端"></a>支付后端</h2><p>这里我就简单使用了 koa 作为支付后端，并且简单到不需要使用路由功能。</p>
+<p>登录我也不打算作，我自己的 openid 在以前我测试这个小程序的时候获取过，我记录了下来直接使用，在下面代码里我隐去了。</p>
+<p>同时我把一些敏感信息一并隐去了，如：商户 id，支付密钥等。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="title class_">Koa</span> = <span class="built_in">require</span>(<span class="string">&#x27;koa&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> axios = <span class="built_in">require</span>(<span class="string">&#x27;axios&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> md5 = <span class="built_in">require</span>(<span class="string">&#x27;md5&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> &#123;js2xml, xml2js&#125; = <span class="built_in">require</span>(<span class="string">&#x27;xml-js&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="keyword">new</span> <span class="title class_">Koa</span>()</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(<span class="keyword">async</span> ctx =&gt; &#123;</span><br><span class="line">  <span class="keyword">const</span> dict = &#123;</span><br><span class="line">    <span class="attr">xml</span>: &#123;</span><br><span class="line">      <span class="attr">body</span>: <span class="string">&#x27;JSAPI支付测试&#x27;</span>,</span><br><span class="line">      <span class="attr">appid</span>: <span class="string">&#x27;你的小程序 id&#x27;</span>,</span><br><span class="line">      <span class="attr">mch_id</span>: <span class="string">&#x27;商户 id&#x27;</span>,</span><br><span class="line">      <span class="attr">nonce_str</span>: <span class="title function_">generateNonceStr</span>(), <span class="comment">// 随机字符串，长度要求在32位以内。调用随机数函数生成，将得到的值转换为字符串</span></span><br><span class="line">      <span class="attr">notify_url</span>: <span class="string">&#x27;http://127.0.0.1/notify&#x27;</span>,</span><br><span class="line">      <span class="attr">openid</span>: <span class="string">&#x27;支付用户的 openid&#x27;</span>, <span class="comment">// 懒得做登录系统了</span></span><br><span class="line">      <span class="attr">out_trade_no</span>: <span class="string">&#x27;3783-6c16-4fab-83ff-6f193d70111&#x27;</span>, <span class="comment">// 商户系统内部订单号，要求32个字符内，只能是数字、大小写字母_-|*且在同一个商户号下唯一</span></span><br><span class="line">      <span class="attr">spbill_create_ip</span>: <span class="string">&#x27;127.0.0.1&#x27;</span>,</span><br><span class="line">      <span class="attr">total_fee</span>: <span class="number">10</span>, <span class="comment">// 订单总金额，单位为分</span></span><br><span class="line">      <span class="attr">trade_type</span>: <span class="string">&#x27;JSAPI&#x27;</span>,</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">let</span> str = <span class="string">&quot;&quot;</span></span><br><span class="line">  <span class="title class_">Object</span>.<span class="title function_">keys</span>(dict.<span class="property">xml</span>).<span class="title function_">sort</span>().<span class="title function_">forEach</span>(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (str === <span class="string">&#x27;&#x27;</span>) &#123;</span><br><span class="line">      str += <span class="string">`<span class="subst">$&#123;key&#125;</span>=<span class="subst">$&#123;dict.xml[key]&#125;</span>`</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      str += <span class="string">`&amp;<span class="subst">$&#123;key&#125;</span>=<span class="subst">$&#123;dict.xml[key]&#125;</span>`</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  str += <span class="string">&#x27;&amp;key=&#x27;</span> + <span class="string">&#x27;你的 key&#x27;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> sign = <span class="title function_">md5</span>(str)</span><br><span class="line">  dict.<span class="property">xml</span>.<span class="property">sign</span> = sign.<span class="title function_">toUpperCase</span>()</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> d = <span class="title function_">js2xml</span>(dict, &#123;<span class="attr">compact</span>: <span class="literal">true</span>, <span class="attr">ignoreComment</span>: <span class="literal">true</span>, <span class="attr">spaces</span>: <span class="number">2</span>&#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> res = <span class="keyword">await</span> axios.<span class="title function_">post</span>(<span class="string">&#x27;https://api.mch.weixin.qq.com/pay/unifiedorder&#x27;</span>, d, &#123;</span><br><span class="line">    <span class="attr">headers</span>: &#123;</span><br><span class="line">      <span class="string">&quot;Content-Type&quot;</span>: <span class="string">&quot;text/xml&quot;</span>,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> data = <span class="title function_">xml2js</span>(res.<span class="property">data</span>, &#123;<span class="attr">compact</span>: <span class="literal">true</span>&#125;)</span><br><span class="line"></span><br><span class="line">  <span class="keyword">const</span> clientDict = &#123;</span><br><span class="line">    <span class="attr">appId</span>: <span class="string">&#x27;你的小程序 id&#x27;</span>,</span><br><span class="line">    <span class="attr">timeStamp</span>: <span class="title class_">Math</span>.<span class="title function_">floor</span>(<span class="title class_">Date</span>.<span class="title function_">now</span>()/<span class="number">1000</span>).<span class="title function_">toString</span>(),</span><br><span class="line">    <span class="attr">nonceStr</span>: <span class="title function_">generateNonceStr</span>(),</span><br><span class="line">    <span class="attr">package</span>: <span class="string">&#x27;prepay_id=&#x27;</span> + data.<span class="property">xml</span>.<span class="property">prepay_id</span>.<span class="property">_cdata</span>,</span><br><span class="line">    <span class="attr">signType</span>: <span class="string">&#x27;MD5&#x27;</span>,</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  str = <span class="string">&#x27;&#x27;</span></span><br><span class="line">  <span class="title class_">Object</span>.<span class="title function_">keys</span>(clientDict).<span class="title function_">sort</span>().<span class="title function_">forEach</span>(<span class="function"><span class="params">key</span> =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (str === <span class="string">&#x27;&#x27;</span>) &#123;</span><br><span class="line">      str += <span class="string">`<span class="subst">$&#123;key&#125;</span>=<span class="subst">$&#123;clientDict[key]&#125;</span>`</span></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      str += <span class="string">`&amp;<span class="subst">$&#123;key&#125;</span>=<span class="subst">$&#123;clientDict[key]&#125;</span>`</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line">  str += <span class="string">&#x27;&amp;key=&#x27;</span> + <span class="string">&#x27;你的 key&#x27;</span></span><br><span class="line">  clientDict.<span class="property">paySign</span> = <span class="title function_">md5</span>(str)</span><br><span class="line"></span><br><span class="line">  ctx.<span class="property">body</span> = clientDict</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">generateNonceStr</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Math</span>.<span class="title function_">random</span>().<span class="title function_">toString</span>().<span class="title function_">slice</span>(<span class="number">2</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">listen</span>(<span class="number">3000</span>)</span><br></pre></td></tr></table></figure>
+
+<p>代码的大体流程就是准备参数，这里我是将微信文档里标记的必要参数都写了上去了，这应该是最少的参数了。</p>
+<p>后端需要把这些参数传递给后端，其中 <code>sign</code> 是把这些参数按照其 key 的 ASCII 码排序拼接后进行 md5 后得到，再和原本的字段一起传递给微信服务器。</p>
+<p>这里微信的入参和出参都是 xml 格式，我们利用 npm 包来转换成更方便使用的 json。</p>
+<p>我们再把微信给我们的结果，做一样的加密工作，然后把所需参数传递给前端，即 <code>requestPayment</code>。</p>
+<p>到这里，一个极简的支付就完成了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>吐槽一下，不知道为什么，微信至今还是用 xml 作为数据交换，哪怕兼容地加一种 json 方式呢？</p>
+<p>之前，我其实用 java 写过类似的支付，当时整个流程用的现成的 SDK 来做支付，只需要传递必要参数就行，其实这次做完，发现支付其实也只是一个简单请求而已，代码量并不多，盲目用一些包，万一里面有什么恶意的逻辑就不好了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clgt1rfbt0009cgoqf8vk5xfi" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Node-js/" rel="tag">Node.js</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">微信小程序</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-Flutter-与-iOS-通信：MethodChannel" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" class="article-date">
@@ -111,7 +170,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clgstihkq0005cfov7ry8c6mg" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clgt1rfbr0005cgoq2o1r2xrg" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -175,7 +234,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clgstihkp0004cfovg77n2n6n" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clgt1rfbq0004cgoq103gesvu" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -257,7 +316,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clgstihlb001icfov12pf205d" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clgt1rfcd001pcgoq93tg3b66" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
@@ -350,7 +409,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgstihkt000acfovf9k52i76" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgt1rfbw000ccgoq25i9487r" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
       
       
       
@@ -416,7 +475,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgstihks0009cfov0qpe8g0r" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgt1rfbu000acgoq92kk1cn4" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
@@ -471,7 +530,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgstihkr0006cfov7m609n7l" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgt1rfbs0006cgoq1du335qn" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
@@ -531,7 +590,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgstihkx000gcfovb5ljhyvg" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgt1rfbz000hcgoq36vu38y5" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
       
       
       
@@ -601,7 +660,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgstihku000ccfovfdu3e4ie" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgt1rfbx000ecgoq0znad5sy" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
       
       
       
@@ -652,59 +711,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgstihkn0002cfovak338wa2" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgt1rfbo0002cgoq689ub4sy" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-常用的术语及英文缩写（不定期更新）" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" class="article-date">
-  <time class="dt-published" datetime="2023-04-12T10:32:56.000Z" itemprop="datePublished">2023-04-12</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/">常用的术语及英文缩写（不定期更新）</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="A"><a href="#A" class="headerlink" title="A"></a>A</h2><p>AST: Abstract Syntax Tree, 抽象语法树。 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8A%BD%E8%B1%A1%E8%AA%9E%E6%B3%95%E6%A8%B9">wiki</a></p>
-<h2 id="B"><a href="#B" class="headerlink" title="B"></a>B</h2><p>BFS: Breadth-First Search，广度优先搜索。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2">wiki</a></p>
-<h2 id="C"><a href="#C" class="headerlink" title="C"></a>C</h2><p>CSS: Cascading Style Sheets, 层叠样式表。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/CSS">wiki</a></p>
-<h2 id="D"><a href="#D" class="headerlink" title="D"></a>D</h2><p>DCE: Dead code elimination，死代码消除。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-hans/%E6%AD%BB%E7%A2%BC%E5%88%AA%E9%99%A4">wiki</a></p>
-<p>DFS: Depth-First-Search，深度优先算法。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2">wiki</a></p>
-<h2 id="E"><a href="#E" class="headerlink" title="E"></a>E</h2><h2 id="F"><a href="#F" class="headerlink" title="F"></a>F</h2><h2 id="G"><a href="#G" class="headerlink" title="G"></a>G</h2><h2 id="H"><a href="#H" class="headerlink" title="H"></a>H</h2><h2 id="I"><a href="#I" class="headerlink" title="I"></a>I</h2><h2 id="J"><a href="#J" class="headerlink" title="J"></a>J</h2><h2 id="K"><a href="#K" class="headerlink" title="K"></a>K</h2><h2 id="L"><a href="#L" class="headerlink" title="L"></a>L</h2><h2 id="M"><a href="#M" class="headerlink" title="M"></a>M</h2><h2 id="O"><a href="#O" class="headerlink" title="O"></a>O</h2><h2 id="P"><a href="#P" class="headerlink" title="P"></a>P</h2><h2 id="Q"><a href="#Q" class="headerlink" title="Q"></a>Q</h2><h2 id="R"><a href="#R" class="headerlink" title="R"></a>R</h2><h2 id="S"><a href="#S" class="headerlink" title="S"></a>S</h2><p>SPA: Single-page application，单页应用。<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Glossary/SPA">MDN</a></p>
-<h2 id="T"><a href="#T" class="headerlink" title="T"></a>T</h2><p>Trie: 又称前缀树或字典树。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Trie">wiki</a></p>
-<h2 id="U"><a href="#U" class="headerlink" title="U"></a>U</h2><h2 id="V"><a href="#V" class="headerlink" title="V"></a>V</h2><p>Vite: 是一种新型前端构建工具。<a target="_blank" rel="noopener" href="https://cn.vitejs.dev/">官网</a></p>
-<h2 id="W"><a href="#W" class="headerlink" title="W"></a>W</h2><h2 id="X"><a href="#X" class="headerlink" title="X"></a>X</h2><h2 id="Y"><a href="#Y" class="headerlink" title="Y"></a>Y</h2><h2 id="Z"><a href="#Z" class="headerlink" title="Z"></a>Z</h2>
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" data-id="clgstihky000hcfov56l21j6d" data-title="常用的术语及英文缩写（不定期更新）" class="article-share-link">Teilen</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
 
     </footer>
   </div>
@@ -732,7 +743,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">微信小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
     </div>
   </div>
 
@@ -742,7 +753,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 15px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 15px;">Javascript</a> <a href="/blog/tags/React-Native/" style="font-size: 15px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 16.67px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
     </div>
   </div>
 
@@ -764,6 +775,10 @@
       <ul>
         
           <li>
+            <a href="/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/">Node.js 打通微信小程序支付</a>
+          </li>
+        
+          <li>
             <a href="/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/">Flutter 与 iOS 通信：MethodChannel</a>
           </li>
         
@@ -777,10 +792,6 @@
         
           <li>
             <a href="/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/">使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/">Swift 原生应用与 WebView 互相通信</a>
           </li>
         
       </ul>
