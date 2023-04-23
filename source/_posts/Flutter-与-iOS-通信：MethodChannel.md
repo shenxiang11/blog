@@ -137,7 +137,7 @@ import Flutter
 
 由于获取电量需要真机运行，特意录了屏。
 
-![](//resources/2023-04/08.gif)
+![](/resources/2023-04/08.gif)
 
 
 ## 总结
@@ -145,3 +145,5 @@ import Flutter
 Flutter 的项目，原生端可以创建 Swift 类型的项目，文档的代码也很详细，这太友好了。iOS 都主推 swift 和 swiftUI 了， RN 却依然只能创建 oc 项目。
 
 掌握了 `MethodChannel` 的通信方式，就能满足日常的开发需求了。
+
+觉得 Flutter 的通信 api 设计的很好，简单易学，之前我自己探索的原生与 webview 的通信还是比较复杂的，传递的信息感觉不是很方便，后续继续去探索学习看看是否有更好的方法。
