@@ -71,6 +71,56 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-在-gin-项目中使用-swagger" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" class="article-date">
+  <time class="dt-published" datetime="2023-04-25T09:57:23.000Z" itemprop="datePublished">2023-04-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/">在 gin 项目中使用 swagger</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>准备开发一个低代码的问卷项目，类似于问卷星，后端采用 gin，前后端沟通的最重要部分是文档，但是我不想手动维护文档，所以采用 swagger 来生成。</p>
+<h2 id="main-代码"><a href="#main-代码" class="headerlink" title="main 代码"></a>main 代码</h2><p><code>main</code> 函数上的注释，后续会成为文档的一部分，同样会成为文档一部分的是，下一部分 controller 上的注释。</p>
+<p>除了导入 swagger 相关的包，我们还需要导入项目的一个目录，如果不导入会遇到，swagger 网站打开后加载 json 失败的问题。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	swaggerFiles <span class="string">&quot;github.com/swaggo/files&quot;</span></span><br><span class="line">	ginSwagger <span class="string">&quot;github.com/swaggo/gin-swagger&quot;</span></span><br><span class="line">	_ <span class="string">&quot;survey-api/docs&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// @title 问卷项目</span></span><br><span class="line"><span class="comment">// @description 项目练习</span></span><br><span class="line"><span class="comment">// @version 1.0</span></span><br><span class="line"><span class="comment">// @contact.name golang</span></span><br><span class="line"><span class="comment">// @contact.url https://www.baidu.com</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	r := gin.Default()</span><br><span class="line">	api.RegisterHandlers(r)</span><br><span class="line"></span><br><span class="line">	r.GET(<span class="string">&quot;/swagger/*any&quot;</span>, ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.PersistAuthorization(<span class="literal">true</span>)))</span><br><span class="line"></span><br><span class="line">	srv := &amp;http.Server&#123;</span><br><span class="line">		Addr:    <span class="string">&quot;:8000&quot;</span>,</span><br><span class="line">		Handler: r,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	err := srv.ListenAndServe()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">panic</span>(err)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="controller-代码"><a href="#controller-代码" class="headerlink" title="controller 代码"></a>controller 代码</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> inquirer</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;survey-api/domain/inquirer&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;github.com/gin-gonic/gin&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Controller <span class="keyword">struct</span> &#123;</span><br><span class="line">	inquirerService *inquirer.Service</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewInquirerController</span><span class="params">(service *inquirer.Service)</span></span> *Controller &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;Controller&#123;inquirerService: service&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// CreateInquirer godoc</span></span><br><span class="line"><span class="comment">// @Summary 创建问卷平台的用户</span></span><br><span class="line"><span class="comment">// @Tags Auth</span></span><br><span class="line"><span class="comment">// @Accept json</span></span><br><span class="line"><span class="comment">// @Product json</span></span><br><span class="line"><span class="comment">// @Param CreateUerRequest body CreateInquirerRequest true &quot;表单&quot;</span></span><br><span class="line"><span class="comment">// @Success 201 &#123;object&#125; CreateInquirerResponse</span></span><br><span class="line"><span class="comment">// @Failure 400 &#123;object&#125; api_helper.ErrorResponse</span></span><br><span class="line"><span class="comment">// @Router /inquirer [post]</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Controller)</span></span> CreateInquirer(g *gin.Context) &#123;</span><br><span class="line">	<span class="keyword">var</span> req CreateInquirerRequest</span><br><span class="line">	<span class="keyword">if</span> err := g.ShouldBind(&amp;req); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// <span class="doctag">TODO:</span> handleError</span></span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	i := inquirer.NewInquirer(req.Email, req.Username, req.Password)</span><br><span class="line">	err := c.inquirerService.Create(i)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// <span class="doctag">TODO:</span> handleError</span></span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	g.JSON(http.StatusCreated, CreateInquirerResponse&#123;&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们基本上，只需要按这个模版写上少量注释，就能够生成文档。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>swagger 网站的默认风格调用 api 还是非常不方便的，我暂时没有发现更换现成主题的方式，但是它只是支持导入到 postman 的，我们可以在 postman 里进行接口的测试。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clgvmn470000hbhof25t1daic" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/gin/" rel="tag">gin</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/go/" rel="tag">go</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/swagger/" rel="tag">swagger</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-Node-js-打通微信小程序支付" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" class="article-date">
@@ -116,7 +166,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clgt1rfbt0009cgoqf8vk5xfi" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clgvmn46u0009bhof2dcg2dct" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
       
       
       
@@ -170,7 +220,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clgt1rfbr0005cgoq2o1r2xrg" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clgvmn46r0005bhofc20m724g" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -234,7 +284,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clgt1rfbq0004cgoq103gesvu" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clgvmn46q0004bhofb9agfu41" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -316,7 +366,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clgt1rfcd001pcgoq93tg3b66" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clgvmn472000lbhofa7oc8shl" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
@@ -409,7 +459,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgt1rfbw000ccgoq25i9487r" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgvmn46w000cbhof0p7tce8e" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
       
       
       
@@ -475,7 +525,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgt1rfbu000acgoq92kk1cn4" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgvmn46v000abhof9j1ravr4" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
@@ -530,7 +580,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgt1rfbs0006cgoq1du335qn" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgvmn46s0006bhofhc2uadp4" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
@@ -590,7 +640,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgt1rfbz000hcgoq36vu38y5" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgvmn471000jbhof5tci7cyd" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
       
       
       
@@ -660,62 +710,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgt1rfbx000ecgoq0znad5sy" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgvmn46x000ebhoffsva3z9o" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="posts-Element-Plus-文档导航效果模仿" class="h-entry article article-type-posts" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" class="article-date">
-  <time class="dt-published" datetime="2023-04-13T08:25:19.000Z" itemprop="datePublished">2023-04-13</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/">Element Plus 文档导航效果模仿</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><img src="/blog/resources/2023-04-13/01.gif"></p>
-<p>就像图中你所看到的，该网站导航栏处，给它下方的滚动的元素添加了一个比较炫酷的效果。</p>
-<p>CSS 有个很多效果并不需要很多知识，但是开发人员往往很难想到，这次目标就是模仿一下这个效果。</p>
-<iframe src="https://codesandbox.io/embed/hopeful-rgb-c1eps8?fontsize=14&hidenavigation=1&theme=dark&view=preview" width="100%" height="300" frameborder="0" loading="lazy" allowfullscreen></iframe>
-
-
-<h2 id="原理简单介绍"><a href="#原理简单介绍" class="headerlink" title="原理简单介绍"></a>原理简单介绍</h2><p>首先介绍一下 <code>radial-gradient</code>，创建一个图像，该图像由从原点辐射的两种或多种颜色之间的渐进过渡组成。它的形状可以是圆形或椭圆形。</p>
-<p>我们使用它在 4x4 的界面上，绘制一个 1x1 的透明的圆圈，然后将它平铺到整个导航栏，这是我们可以透过导航栏看到下面元素的原因。</p>
-<p>最后，是使用 <code>backdrop-filter</code>，它可以让你为一个元素后面区域添加图形效果（如模糊或颜色偏移）。</p>
-<p>因为它适用于元素背后的所有元素，为了看到效果，必须使元素或其背景至少部分透明，我们前一步刚好有一部分是透明的。</p>
-<p>具体应用的图形效果，<code>blur</code> 是高斯模糊，<code>saturate</code> 是修改图像饱和度，你可以在 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/filter">MDN</a> 看看设置它们的效果。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgt1rfbo0002cgoq689ub4sy" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li></ul>
 
     </footer>
   </div>
@@ -743,7 +742,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">微信小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/gin/" rel="tag">gin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/go/" rel="tag">go</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/swagger/" rel="tag">swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">微信小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
     </div>
   </div>
 
@@ -753,7 +752,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 16.67px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 16.67px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 10px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
     </div>
   </div>
 
@@ -775,6 +774,10 @@
       <ul>
         
           <li>
+            <a href="/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/">在 gin 项目中使用 swagger</a>
+          </li>
+        
+          <li>
             <a href="/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/">Node.js 打通微信小程序支付</a>
           </li>
         
@@ -788,10 +791,6 @@
         
           <li>
             <a href="/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/">手写 min-vue-router</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/">使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法</a>
           </li>
         
       </ul>
