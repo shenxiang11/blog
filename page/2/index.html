@@ -71,6 +71,76 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-ios-swift-工程集成-react-native" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" class="article-date">
+  <time class="dt-published" datetime="2023-04-14T19:13:49.000Z" itemprop="datePublished">2023-04-14</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/">iOS Swift 工程集成 React Native</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>看了很多 React Native 教程，大多都是通过官方脚手架创建出的项目，同时包含 iOS 和 Android 的。</p>
+<p>实际目前很多公司的开发模式和这种其实是不一样的，更多是向已有的的工程中集成 React Native。</p>
+<p>我也尝试在一个独立的 iOS Swift 项目中，尝试部分页面接入 RN。</p>
+<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>目标就是如图中所示，可以通过 iOS 端的按钮点击，唤起 React Native 开发的简单页面。</p>
+<p><img src="/blog/resources/2023-04-14/01.png" alt="01.png"></p>
+<h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><p>首先，创建 RN 工程，这一步和全 RN 开发并无不同，我们依然借助脚手架初始化工程。</p>
+<p>App 页面是官方的示例页面，我将它改成了简单的 Hello world。</p>
+<p><code>index.js</code> 是入口文件，并没有做任何修改，把代码贴出来是希望注意到 <code>registerComponent</code> 方法，它的第一个参数 <code>appName</code> 会在原生端用到。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@format</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="keyword">import</span> &#123;<span class="title class_">AppRegistry</span>&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&#x27;./App&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;name <span class="keyword">as</span> appName&#125; <span class="keyword">from</span> <span class="string">&#x27;./app.json&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="title class_">AppRegistry</span>.<span class="title function_">registerComponent</span>(appName, <span class="function">() =&gt;</span> <span class="title class_">App</span>);</span><br></pre></td></tr></table></figure>
+
+<p>接着，我们创建 iOS Swift 工程，这是通过 XCode 创建的，一路下一步，没有什么可以多说的。</p>
+<p>然后，我们需要通过 Cocoapods 安装依赖，这里说一下不要按照 React Native 中文网提供的 podfile 来编写，可以参考脚手架里的 iOS 项目去编写依赖。</p>
+<p>我们只需要一个 <code>ViewController</code>, 通过 <code>StoryBoard</code> 创建一个按钮，绑定一个 <code>tap</code> 事件即可。</p>
+<p>在事件的回调函数中，我们就可以创建我们的 RN 视图，并加载它，代码如下：</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> React</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ViewController</span>: <span class="title class_">UIViewController</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">viewDidLoad</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line">        <span class="comment">// Do any additional setup after loading the view.</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBAction</span> <span class="keyword">func</span> <span class="title function_">onClick</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="keyword">Any</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> bridge <span class="operator">=</span> <span class="type">RCTBridge</span>(delegate: <span class="type">MyReactNativeBridge</span>())</span><br><span class="line">        <span class="keyword">let</span> rootView <span class="operator">=</span> <span class="type">RCTRootView</span>(bridge: bridge<span class="operator">!</span>, moduleName: <span class="string">&quot;hybridrn&quot;</span>, initialProperties:  <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> vc <span class="operator">=</span> <span class="type">UIViewController</span>()</span><br><span class="line">        vc.modalPresentationStyle <span class="operator">=</span> .fullScreen</span><br><span class="line">        vc.view <span class="operator">=</span> rootView</span><br><span class="line">        <span class="keyword">self</span>.show(vc, sender: <span class="literal">nil</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyReactNativeBridge</span>: <span class="title class_">NSObject</span>, <span class="title class_">RCTBridgeDelegate</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">sourceURL</span>(<span class="params">for</span> <span class="params">bridge</span>: <span class="type">RCTBridge</span>!) -&gt; <span class="type">URL</span>! &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">URL</span>(string: <span class="string">&quot;http://localhost:8081/index.bundle?platform=ios&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们创建了一个 <code>bridge</code> 对象，他的 <code>delegate</code> 实现了 <code>RCTBridgeDelegate</code>, 通过 <code>sourceURL</code> 去加载 js bundle 的地址。</p>
+<p>随后就是通过 <code>RCRootView</code> 创建出视图，然后展示即可，其中 <code>moduleName</code> 就需要传之前的 appName。</p>
+<p>一般混合开发中，我们就可以注册很多的 module，原生去负责这些页面的跳转。</p>
+<h2 id="避坑指南"><a href="#避坑指南" class="headerlink" title="避坑指南"></a>避坑指南</h2><p>这样配置完成后，在开发阶段，我们就可以在这个项目中预览我们 RN 开发的页面了，它的热更新也是没有问题的。</p>
+<p>但是，在我一次测试中，RN 端如果有报错，模拟器上如果我们显示了 LogBox 的话，下次热更新生效前，iOS App 就会崩溃。</p>
+<p>经过排查后，发现是 iOS 这边 React Native 的包里，如下这段代码出现了问题：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)dealloc</span><br><span class="line">&#123;</span><br><span class="line">    [RCTSharedApplication().delegate.window makeKeyWindow];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>原因是我们新创建的 iOS 工程里，window 已经不再 AppDelegate 类中有声明了，我们可以在 AppDelegate 里声明一下：<code>var window: UIWindow?</code>,</p>
+<p>这样，我们就可以在原生 iOS 项目里开发 RN 了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>整个集成过程并不难，也遇到了两个比较坑的点，一是 cocoapods 的依赖文件一开始参考的 RN 中文网，估计是很久以前的版本了，怎么都成功不了；二是遇到热更新的问题， 在经过调试后，也顺利解决了。</p>
+<p>开发阶段我们就去加载 bundle 的地址是没有问题的；如果是线上版本，混合开发模式应该是要有一套下载 bundle 的策略，让 App 去加载本地 bundle，这又是个值得去学习的点了。</p>
+<p>这也让我理解了为什么 RN 能够热更新了，bundle 就是个 js 文件，我们只要替换这个文件地址或者文件就能实现应用的更新。</p>
+<p>RN 的出现确实让前端繁荣了一段时间，但是这究竟是好事还是坏事呢，前端已死？客户端已死？</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clh5qtc4j000ebgop72alb7tg" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="posts-Element-Plus-文档导航效果模仿" class="h-entry article article-type-posts" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" class="article-date">
@@ -108,7 +178,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clgvmn46o0002bhofc3y9g3ol" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/" data-id="clh5qtc480002bgophe37dbqw" data-title="Element Plus 文档导航效果模仿" class="article-share-link">Teilen</a>
       
       
       
@@ -145,8 +215,10 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h2 id="A"><a href="#A" class="headerlink" title="A"></a>A</h2><p>AST: Abstract Syntax Tree, 抽象语法树。 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%8A%BD%E8%B1%A1%E8%AA%9E%E6%B3%95%E6%A8%B9">wiki</a></p>
+<p>ARIA: Accessible Rich Internet Applications, 是一组属性，用于定义使残障人士更容易访问 Web 内容和 Web 应用程序（尤其是使用 JavaScript 开发的应用程序）的方法。<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/Accessibility/ARIA">mdn</a></p>
 <h2 id="B"><a href="#B" class="headerlink" title="B"></a>B</h2><p>BFS: Breadth-First Search，广度优先搜索。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%B9%BF%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2">wiki</a></p>
 <h2 id="C"><a href="#C" class="headerlink" title="C"></a>C</h2><p>CSS: Cascading Style Sheets, 层叠样式表。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/CSS">wiki</a></p>
+<p>Closure: 闭包，又称词法闭包或函数闭包，是在支持头等函数的编程语言中实现词法绑定的一种技术。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-cn/%E9%97%AD%E5%8C%85_(%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%A7%91%E5%AD%A6)">wiki</a></p>
 <h2 id="D"><a href="#D" class="headerlink" title="D"></a>D</h2><p>DCE: Dead code elimination，死代码消除。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/zh-hans/%E6%AD%BB%E7%A2%BC%E5%88%AA%E9%99%A4">wiki</a></p>
 <p>DFS: Depth-First-Search，深度优先算法。<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%85%88%E6%90%9C%E7%B4%A2">wiki</a></p>
 <h2 id="E"><a href="#E" class="headerlink" title="E"></a>E</h2><h2 id="F"><a href="#F" class="headerlink" title="F"></a>F</h2><h2 id="G"><a href="#G" class="headerlink" title="G"></a>G</h2><h2 id="H"><a href="#H" class="headerlink" title="H"></a>H</h2><h2 id="I"><a href="#I" class="headerlink" title="I"></a>I</h2><h2 id="J"><a href="#J" class="headerlink" title="J"></a>J</h2><h2 id="K"><a href="#K" class="headerlink" title="K"></a>K</h2><h2 id="L"><a href="#L" class="headerlink" title="L"></a>L</h2><h2 id="M"><a href="#M" class="headerlink" title="M"></a>M</h2><h2 id="O"><a href="#O" class="headerlink" title="O"></a>O</h2><h2 id="P"><a href="#P" class="headerlink" title="P"></a>P</h2><h2 id="Q"><a href="#Q" class="headerlink" title="Q"></a>Q</h2><h2 id="R"><a href="#R" class="headerlink" title="R"></a>R</h2><h2 id="S"><a href="#S" class="headerlink" title="S"></a>S</h2><p>SPA: Single-page application，单页应用。<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Glossary/SPA">MDN</a></p>
@@ -156,7 +228,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" data-id="clgvmn472000kbhofcpar8zxf" data-title="常用的术语及英文缩写（不定期更新）" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" data-id="clh5qtc4s000lbgop1m8s24ew" data-title="常用的术语及英文缩写（不定期更新）" class="article-share-link">Teilen</a>
       
       
       
@@ -218,7 +290,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clgvmn474000obhofcqix13zu" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/11/%E8%AE%B0%E4%B8%80%E6%AC%A1-RN-%E7%AC%AC%E4%B8%89%E6%96%B9%E7%BB%84%E4%BB%B6%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5/" data-id="clh5qtc5c0020bgopfsowetue" data-title="记一次 RN 第三方组件 react-native-htmlview 问题排查" class="article-share-link">Teilen</a>
       
       
       
@@ -288,7 +360,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clgvmn46z000gbhof44uk0vd6" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" data-id="clh5qtc4p000hbgopgr8vb0ve" data-title="经典排序算法之冒泡排序：我的冒泡排序有什么问题" class="article-share-link">Teilen</a>
       
       
       
@@ -330,7 +402,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 16.67px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 10px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 15px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 20px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 15px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 10px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
     </div>
   </div>
 
@@ -339,7 +411,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2023/04/">四月 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2023/05/">五月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2023/04/">四月 2023</a></li></ul>
     </div>
   </div>
 
@@ -350,6 +422,10 @@
     <h3 class="widget-title">letzter Beitrag</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/">null 和 undefined 的区别：看看祖师爷是怎么说的</a>
+          </li>
         
           <li>
             <a href="/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/">在 gin 项目中使用 swagger</a>
@@ -365,10 +441,6 @@
         
           <li>
             <a href="/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/">Flutter 与 iOS 通信: BasicMessageChannel</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/">手写 min-vue-router</a>
           </li>
         
       </ul>

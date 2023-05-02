@@ -4,24 +4,22 @@
   <meta charset="utf-8">
   
   
-  <title>力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计 | 前端芯事</title>
+  <title>null 和 undefined 的区别：看看祖师爷是怎么说的 | 前端芯事</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="力扣 709: 转换成小写字母 最直接的解法本题需要将字符串中的大写字母转换为小写字母，不难想出直接利用 API 的方法： 123function toLowerCase(s: string): string &amp;#123;    return s.toLowerCase()&amp;#125;;   字母在 ASCII 码的分布  可以观察到： 大写字母的范围是：60～90，而小写字母则是 97～122，">
+  <meta name="description" content="前言：困惑的产生平时，我们在使用 Javascript 时，undefined 和 null 几乎没有区别。 而在使用 TS 时，我们有明确的可以知道，它们是完全两种不同的类型，我可以互相赋值，在使用时并不完全等价，这就对我们的使用造成了困惑：到底什么时候用哪个，到底有什么区别。 据我所知，目前 JS 是唯一一个拥有两个表示“空”的类型的语言。 了解历史查阅了一些资料，了解到，最早的 js 的版本">
 <meta property="og:type" content="article">
-<meta property="og:title" content="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计">
-<meta property="og:url" content="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/index.html">
+<meta property="og:title" content="null 和 undefined 的区别：看看祖师爷是怎么说的">
+<meta property="og:url" content="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/index.html">
 <meta property="og:site_name" content="前端芯事">
-<meta property="og:description" content="力扣 709: 转换成小写字母 最直接的解法本题需要将字符串中的大写字母转换为小写字母，不难想出直接利用 API 的方法： 123function toLowerCase(s: string): string &amp;#123;    return s.toLowerCase()&amp;#125;;   字母在 ASCII 码的分布  可以观察到： 大写字母的范围是：60～90，而小写字母则是 97～122，">
+<meta property="og:description" content="前言：困惑的产生平时，我们在使用 Javascript 时，undefined 和 null 几乎没有区别。 而在使用 TS 时，我们有明确的可以知道，它们是完全两种不同的类型，我可以互相赋值，在使用时并不完全等价，这就对我们的使用造成了困惑：到底什么时候用哪个，到底有什么区别。 据我所知，目前 JS 是唯一一个拥有两个表示“空”的类型的语言。 了解历史查阅了一些资料，了解到，最早的 js 的版本">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-04/01.png">
-<meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-04/02.png">
-<meta property="article:published_time" content="2023-04-17T09:31:31.000Z">
+<meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-05/01.png">
+<meta property="article:published_time" content="2023-05-02T11:06:05.000Z">
 <meta property="article:modified_time" content="2023-05-02T04:01:49.443Z">
 <meta property="article:author" content="芯芯爸爸">
-<meta property="article:tag" content="算法">
-<meta property="article:tag" content="位运算">
+<meta property="article:tag" content="Javascript">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://shenxiang11.github.io/blog/resources/2023-04/01.png">
+<meta name="twitter:image" content="https://shenxiang11.github.io/blog/resources/2023-05/01.png">
   
     <link rel="alternate" href="/blog/atom.xml" title="前端芯事" type="application/atom+xml">
   
@@ -78,10 +76,10 @@
 </header>
 
       <div class="outer">
-        <section id="main"><article id="post-Leetcode-709-转换成小写字母-看看-ASCII-码的巧妙设计" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+        <section id="main"><article id="post-null-和-undefined-的区别：看看祖师爷是怎么说的" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
-    <a href="/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" class="article-date">
-  <time class="dt-published" datetime="2023-04-17T09:31:31.000Z" itemprop="datePublished">2023-04-17</time>
+    <a href="/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" class="article-date">
+  <time class="dt-published" datetime="2023-05-02T11:06:05.000Z" itemprop="datePublished">2023-05-02</time>
 </a>
     
   </div>
@@ -92,7 +90,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计
+      null 和 undefined 的区别：看看祖师爷是怎么说的
     </h1>
   
 
@@ -100,30 +98,49 @@
     
     <div class="e-content article-entry" itemprop="articleBody">
       
-        <p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/to-lower-case/">力扣 709: 转换成小写字母</a></p>
-<h2 id="最直接的解法"><a href="#最直接的解法" class="headerlink" title="最直接的解法"></a>最直接的解法</h2><p>本题需要将字符串中的大写字母转换为小写字母，不难想出直接利用 API 的方法：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">toLowerCase</span>(<span class="params">s: <span class="built_in">string</span></span>): <span class="built_in">string</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> s.<span class="title function_">toLowerCase</span>()</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="字母在-ASCII-码的分布"><a href="#字母在-ASCII-码的分布" class="headerlink" title="字母在 ASCII 码的分布"></a>字母在 ASCII 码的分布</h2><p><img src="/blog/resources/2023-04/01.png" alt="01.png"></p>
-<p><img src="/blog/resources/2023-04/02.png" alt="02.png"></p>
-<p>可以观察到： 大写字母的范围是：60～90，而小写字母则是 97～122，这也是以前学习的时候困惑的一点，同样都是字母，为什么不放到一起呢？</p>
-<p>但是，不论连不连续，我们都可以的到一个新的解法：遇到大写字母，得到他的 ASCII 码，加上 32，再转回字符即可。</p>
-<p>如果是放到一起的连续的设计，我们同样只要加 26 就行了。</p>
-<p>我们可以从图中观察到，如今的这个设计方式，在二进制表示时，大小写字母只相差了一位，所以这种解法才可以进一步优化为位运算。</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">toLowerCase</span>(<span class="params">s: <span class="built_in">string</span></span>): <span class="built_in">string</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> ans = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> ch <span class="keyword">of</span> s) &#123;</span><br><span class="line">        <span class="keyword">if</span> (ch &gt;= <span class="string">&#x27;A&#x27;</span> &amp;&amp; ch &lt;= <span class="string">&#x27;Z&#x27;</span>) &#123;</span><br><span class="line">            ans += <span class="title class_">String</span>.<span class="title function_">fromCharCode</span>(ch.<span class="title function_">charCodeAt</span>(<span class="number">0</span>) | <span class="number">32</span>)</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            ans += ch</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> ans</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-
-<p>这样需要操作一位就可以了，达到了最高效的解法。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>可以想像，在以前英语为母语的国家，这种转换是比较高频的操作，而计算资源是比较宝贵的， 如此设计可以将性能优化到最高，不得不感叹，从前计算机科学家的精妙设计。</p>
+        <h2 id="前言：困惑的产生"><a href="#前言：困惑的产生" class="headerlink" title="前言：困惑的产生"></a>前言：困惑的产生</h2><p>平时，我们在使用 Javascript 时，<code>undefined</code> 和 <code>null</code> <strong>几乎</strong>没有区别。</p>
+<p>而在使用 TS 时，我们有明确的可以知道，它们是完全两种不同的类型，我可以互相赋值，在使用时并不完全等价，这就对我们的使用造成了困惑：到底什么时候用哪个，到底有什么区别。</p>
+<p>据我所知，目前 JS 是唯一一个拥有两个表示“空”的类型的语言。</p>
+<h2 id="了解历史"><a href="#了解历史" class="headerlink" title="了解历史"></a>了解历史</h2><p>查阅了一些资料，了解到，最早的 js 的版本中，是只有 <code>null</code> 的，JS 的一些设计参照了其他语言，而 null 在类型转换时可以转换为 0。</p>
+<p>在 C 语言中，函数执行成功或是失败是人为约定的，比如比较常见的约定是执行成功返回 0，失败则返回其他数字。</p>
+<p>而如果我们的 JS 也是这样，null 在自动转换为 0 的时候，往往不容易发现错误。</p>
+<p>不知道是不是这个原因，Brendan Eich 觉得 <code>null</code> 不够好， 又在后续的版本中又设计了一个 <code>undefined</code>，而且已经添加了并被广泛使用。</p>
+<p><code>undefined</code> 在转换成数字类型时，回返回 <code>NaN</code>，这是它们直接一个明显的区别。</p>
+<h2 id="为什么大厂里不允许显示使用-undefined"><a href="#为什么大厂里不允许显示使用-undefined" class="headerlink" title="为什么大厂里不允许显示使用 undefined"></a>为什么大厂里不允许显示使用 <code>undefined</code></h2><p>看过一些分享，说大厂里不允许直接使用 <code>undefined</code>，而是使用 <code>void 0</code> 来代替，它的返回结果是 <code>undefined</code>。</p>
+<p>因为，<code>undefined</code> 不是 JS 里的关键字，它是 <code>window.undefined</code>，即 window 上的一个变量，在现代的 JS 中，它被属性描述符号限制了不可修改了，避免我们犯低级错误。</p>
+<p>而在非全局作用域下，我们依然可以 <code>let undefined = xxx</code> 这还是需要小心的，我们不妨学习大厂的做法，在 code review 时，避免团队里出现显示使用 undefined 的代码。</p>
+<p><code>undefined</code> 是一个变量，<code>null</code> 是一个关键字，这是它们的第二个区别。</p>
+<h2 id="看看祖师爷怎么说"><a href="#看看祖师爷怎么说" class="headerlink" title="看看祖师爷怎么说"></a>看看祖师爷怎么说</h2><p>截图是 2015 年的一则推文，地址是：<a target="_blank" rel="noopener" href="https://twitter.com/BrendanEich/status/617450289889607681">https://twitter.com/BrendanEich/status/617450289889607681</a></p>
+<p><img src="/blog/resources/2023-05/01.png"></p>
+<p>大致意思是一个开发者问为什么 <code>typeof null</code> 的结果是 <code>object</code>，祖师爷首先恢复力，<code>null</code> 表示 <code>no object</code>, <code>undefined</code> 表示 <code>no value</code>。</p>
+<p>随后回答了这个问题，表示 <code>typeof null</code> 的结果是 <code>object</code> 是一个漏洞。</p>
+<p>所以第三个区别是 <code>typeof null</code> 的结果是 <code>object</code>，而 <code>typeof undefined</code> 是 <code>undefined</code>。</p>
+<h2 id="总结：目前前端环境里的表现"><a href="#总结：目前前端环境里的表现" class="headerlink" title="总结：目前前端环境里的表现"></a>总结：目前前端环境里的表现</h2><p>我们知道：</p>
+<ul>
+<li>转换成 bool 时，它们都是 false。</li>
+<li>如果我们仅声明一个变量，为赋值，它的值是 <code>undefined</code>，对象的没有赋值的属性也是一样。</li>
+<li>JS 函数默认的返回值是 <code>undefined</code>。</li>
+<li>原型链的终点是 <code>null</code>。</li>
+<li>调用函数时，没有传入的参数会是 <code>undefined</code>。</li>
+<li>在前端环境里的现成的实现里，如 <code>document.getElementById(&#39;&#39;)</code> 如果没有选择器匹配返回的是 null。这种实现和祖师爷说的是保持一致的，</li>
+</ul>
+<p>甚至我们如果把 <code>null</code> 的 <code>typeof</code> 的设计缺陷，理解为 <code>null</code> 是特别的一种对象，表示这个对象不存在，是“空对象”，也是没有问题的。</p>
+<p>再总结一下，前文提到的具体几处区别：</p>
+<ul>
+<li><code>undefined</code> 在转换成数字类型时，回返回 <code>NaN</code>；<code>null</code> 则是 0。</li>
+<li><code>undefined</code> 是一个变量，<code>null</code> 是一个关键字</li>
+<li><code>typeof null</code> 的结果是 <code>object</code>，而 <code>typeof undefined</code> 是 <code>undefined</code>。</li>
+</ul>
+<p>在 JS 里我们混着用并没有什么区别，但是现在我们知道了一点它们的区别，祖师爷也给出了使用的建议，我们基本上按照他的建议来使用即可。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clh5qtc4d0006bgopcuk4avg9" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clh5qtc4o000gbgop7eqlegbw" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li></ul>
 
     </footer>
   </div>
@@ -131,19 +148,10 @@
     
 <nav id="article-nav">
   
-    <a href="/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Neuer</strong>
-      <div class="article-nav-title">
-        
-          Swift 原生应用与 WebView 互相通信
-        
-      </div>
-    </a>
   
-  
-    <a href="/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Älter</strong>
-      <div class="article-nav-title">如何命名 ts 中的类型</div>
+      <div class="article-nav-title">在 gin 项目中使用 swagger</div>
     </a>
   
 </nav>

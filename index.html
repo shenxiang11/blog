@@ -71,6 +71,80 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-null-和-undefined-的区别：看看祖师爷是怎么说的" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" class="article-date">
+  <time class="dt-published" datetime="2023-05-02T11:06:05.000Z" itemprop="datePublished">2023-05-02</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/">null 和 undefined 的区别：看看祖师爷是怎么说的</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="前言：困惑的产生"><a href="#前言：困惑的产生" class="headerlink" title="前言：困惑的产生"></a>前言：困惑的产生</h2><p>平时，我们在使用 Javascript 时，<code>undefined</code> 和 <code>null</code> <strong>几乎</strong>没有区别。</p>
+<p>而在使用 TS 时，我们有明确的可以知道，它们是完全两种不同的类型，我可以互相赋值，在使用时并不完全等价，这就对我们的使用造成了困惑：到底什么时候用哪个，到底有什么区别。</p>
+<p>据我所知，目前 JS 是唯一一个拥有两个表示“空”的类型的语言。</p>
+<h2 id="了解历史"><a href="#了解历史" class="headerlink" title="了解历史"></a>了解历史</h2><p>查阅了一些资料，了解到，最早的 js 的版本中，是只有 <code>null</code> 的，JS 的一些设计参照了其他语言，而 null 在类型转换时可以转换为 0。</p>
+<p>在 C 语言中，函数执行成功或是失败是人为约定的，比如比较常见的约定是执行成功返回 0，失败则返回其他数字。</p>
+<p>而如果我们的 JS 也是这样，null 在自动转换为 0 的时候，往往不容易发现错误。</p>
+<p>不知道是不是这个原因，Brendan Eich 觉得 <code>null</code> 不够好， 又在后续的版本中又设计了一个 <code>undefined</code>，而且已经添加了并被广泛使用。</p>
+<p><code>undefined</code> 在转换成数字类型时，回返回 <code>NaN</code>，这是它们直接一个明显的区别。</p>
+<h2 id="为什么大厂里不允许显示使用-undefined"><a href="#为什么大厂里不允许显示使用-undefined" class="headerlink" title="为什么大厂里不允许显示使用 undefined"></a>为什么大厂里不允许显示使用 <code>undefined</code></h2><p>看过一些分享，说大厂里不允许直接使用 <code>undefined</code>，而是使用 <code>void 0</code> 来代替，它的返回结果是 <code>undefined</code>。</p>
+<p>因为，<code>undefined</code> 不是 JS 里的关键字，它是 <code>window.undefined</code>，即 window 上的一个变量，在现代的 JS 中，它被属性描述符号限制了不可修改了，避免我们犯低级错误。</p>
+<p>而在非全局作用域下，我们依然可以 <code>let undefined = xxx</code> 这还是需要小心的，我们不妨学习大厂的做法，在 code review 时，避免团队里出现显示使用 undefined 的代码。</p>
+<p><code>undefined</code> 是一个变量，<code>null</code> 是一个关键字，这是它们的第二个区别。</p>
+<h2 id="看看祖师爷怎么说"><a href="#看看祖师爷怎么说" class="headerlink" title="看看祖师爷怎么说"></a>看看祖师爷怎么说</h2><p>截图是 2015 年的一则推文，地址是：<a target="_blank" rel="noopener" href="https://twitter.com/BrendanEich/status/617450289889607681">https://twitter.com/BrendanEich/status/617450289889607681</a></p>
+<p><img src="/blog/resources/2023-05/01.png"></p>
+<p>大致意思是一个开发者问为什么 <code>typeof null</code> 的结果是 <code>object</code>，祖师爷首先恢复力，<code>null</code> 表示 <code>no object</code>, <code>undefined</code> 表示 <code>no value</code>。</p>
+<p>随后回答了这个问题，表示 <code>typeof null</code> 的结果是 <code>object</code> 是一个漏洞。</p>
+<p>所以第三个区别是 <code>typeof null</code> 的结果是 <code>object</code>，而 <code>typeof undefined</code> 是 <code>undefined</code>。</p>
+<h2 id="总结：目前前端环境里的表现"><a href="#总结：目前前端环境里的表现" class="headerlink" title="总结：目前前端环境里的表现"></a>总结：目前前端环境里的表现</h2><p>我们知道：</p>
+<ul>
+<li>转换成 bool 时，它们都是 false。</li>
+<li>如果我们仅声明一个变量，为赋值，它的值是 <code>undefined</code>，对象的没有赋值的属性也是一样。</li>
+<li>JS 函数默认的返回值是 <code>undefined</code>。</li>
+<li>原型链的终点是 <code>null</code>。</li>
+<li>调用函数时，没有传入的参数会是 <code>undefined</code>。</li>
+<li>在前端环境里的现成的实现里，如 <code>document.getElementById(&#39;&#39;)</code> 如果没有选择器匹配返回的是 null。这种实现和祖师爷说的是保持一致的，</li>
+</ul>
+<p>甚至我们如果把 <code>null</code> 的 <code>typeof</code> 的设计缺陷，理解为 <code>null</code> 是特别的一种对象，表示这个对象不存在，是“空对象”，也是没有问题的。</p>
+<p>再总结一下，前文提到的具体几处区别：</p>
+<ul>
+<li><code>undefined</code> 在转换成数字类型时，回返回 <code>NaN</code>；<code>null</code> 则是 0。</li>
+<li><code>undefined</code> 是一个变量，<code>null</code> 是一个关键字</li>
+<li><code>typeof null</code> 的结果是 <code>object</code>，而 <code>typeof undefined</code> 是 <code>undefined</code>。</li>
+</ul>
+<p>在 JS 里我们混着用并没有什么区别，但是现在我们知道了一点它们的区别，祖师爷也给出了使用的建议，我们基本上按照他的建议来使用即可。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clh5qtc4o000gbgop7eqlegbw" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-在-gin-项目中使用-swagger" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" class="article-date">
@@ -107,7 +181,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clgvmn470000hbhof25t1daic" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clh5qtc4q000jbgop7kla3csc" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
       
       
       
@@ -166,7 +240,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clgvmn46u0009bhof2dcg2dct" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clh5qtc4f0009bgop21he912x" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
       
       
       
@@ -220,7 +294,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clgvmn46r0005bhofc20m724g" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clh5qtc4c0005bgopbbuf1jba" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -284,7 +358,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clgvmn46q0004bhofb9agfu41" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clh5qtc4b0004bgopehpbetfh" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -366,7 +440,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clgvmn472000lbhofa7oc8shl" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clh5qtc5b001zbgope3cza7iv" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
@@ -459,7 +533,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clgvmn46w000cbhof0p7tce8e" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clh5qtc4i000cbgopfjv8g7xd" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
       
       
       
@@ -525,7 +599,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clgvmn46v000abhof9j1ravr4" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clh5qtc4g000abgop56ycdc1k" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
@@ -580,7 +654,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clgvmn46s0006bhofhc2uadp4" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clh5qtc4d0006bgopcuk4avg9" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
@@ -640,81 +714,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clgvmn471000jbhof5tci7cyd" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clh5qtc4r000kbgopds2g2m33" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-ios-swift-工程集成-react-native" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" class="article-date">
-  <time class="dt-published" datetime="2023-04-14T19:13:49.000Z" itemprop="datePublished">2023-04-14</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/">iOS Swift 工程集成 React Native</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>看了很多 React Native 教程，大多都是通过官方脚手架创建出的项目，同时包含 iOS 和 Android 的。</p>
-<p>实际目前很多公司的开发模式和这种其实是不一样的，更多是向已有的的工程中集成 React Native。</p>
-<p>我也尝试在一个独立的 iOS Swift 项目中，尝试部分页面接入 RN。</p>
-<h2 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h2><p>目标就是如图中所示，可以通过 iOS 端的按钮点击，唤起 React Native 开发的简单页面。</p>
-<p><img src="/blog/resources/2023-04-14/01.png" alt="01.png"></p>
-<h2 id="操作步骤"><a href="#操作步骤" class="headerlink" title="操作步骤"></a>操作步骤</h2><p>首先，创建 RN 工程，这一步和全 RN 开发并无不同，我们依然借助脚手架初始化工程。</p>
-<p>App 页面是官方的示例页面，我将它改成了简单的 Hello world。</p>
-<p><code>index.js</code> 是入口文件，并没有做任何修改，把代码贴出来是希望注意到 <code>registerComponent</code> 方法，它的第一个参数 <code>appName</code> 会在原生端用到。</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@format</span></span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="comment">// index.js</span></span><br><span class="line"><span class="keyword">import</span> &#123;<span class="title class_">AppRegistry</span>&#125; <span class="keyword">from</span> <span class="string">&#x27;react-native&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&#x27;./App&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;name <span class="keyword">as</span> appName&#125; <span class="keyword">from</span> <span class="string">&#x27;./app.json&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="title class_">AppRegistry</span>.<span class="title function_">registerComponent</span>(appName, <span class="function">() =&gt;</span> <span class="title class_">App</span>);</span><br></pre></td></tr></table></figure>
-
-<p>接着，我们创建 iOS Swift 工程，这是通过 XCode 创建的，一路下一步，没有什么可以多说的。</p>
-<p>然后，我们需要通过 Cocoapods 安装依赖，这里说一下不要按照 React Native 中文网提供的 podfile 来编写，可以参考脚手架里的 iOS 项目去编写依赖。</p>
-<p>我们只需要一个 <code>ViewController</code>, 通过 <code>StoryBoard</code> 创建一个按钮，绑定一个 <code>tap</code> 事件即可。</p>
-<p>在事件的回调函数中，我们就可以创建我们的 RN 视图，并加载它，代码如下：</p>
-<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> React</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">ViewController</span>: <span class="title class_">UIViewController</span> &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">viewDidLoad</span>() &#123;</span><br><span class="line">        <span class="keyword">super</span>.viewDidLoad()</span><br><span class="line">        <span class="comment">// Do any additional setup after loading the view.</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">@IBAction</span> <span class="keyword">func</span> <span class="title function_">onClick</span>(<span class="keyword">_</span> <span class="params">sender</span>: <span class="keyword">Any</span>) &#123;</span><br><span class="line">        <span class="keyword">let</span> bridge <span class="operator">=</span> <span class="type">RCTBridge</span>(delegate: <span class="type">MyReactNativeBridge</span>())</span><br><span class="line">        <span class="keyword">let</span> rootView <span class="operator">=</span> <span class="type">RCTRootView</span>(bridge: bridge<span class="operator">!</span>, moduleName: <span class="string">&quot;hybridrn&quot;</span>, initialProperties:  <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">let</span> vc <span class="operator">=</span> <span class="type">UIViewController</span>()</span><br><span class="line">        vc.modalPresentationStyle <span class="operator">=</span> .fullScreen</span><br><span class="line">        vc.view <span class="operator">=</span> rootView</span><br><span class="line">        <span class="keyword">self</span>.show(vc, sender: <span class="literal">nil</span>)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MyReactNativeBridge</span>: <span class="title class_">NSObject</span>, <span class="title class_">RCTBridgeDelegate</span> &#123;</span><br><span class="line">    <span class="keyword">func</span> <span class="title function_">sourceURL</span>(<span class="params">for</span> <span class="params">bridge</span>: <span class="type">RCTBridge</span>!) -&gt; <span class="type">URL</span>! &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="type">URL</span>(string: <span class="string">&quot;http://localhost:8081/index.bundle?platform=ios&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>我们创建了一个 <code>bridge</code> 对象，他的 <code>delegate</code> 实现了 <code>RCTBridgeDelegate</code>, 通过 <code>sourceURL</code> 去加载 js bundle 的地址。</p>
-<p>随后就是通过 <code>RCRootView</code> 创建出视图，然后展示即可，其中 <code>moduleName</code> 就需要传之前的 appName。</p>
-<p>一般混合开发中，我们就可以注册很多的 module，原生去负责这些页面的跳转。</p>
-<h2 id="避坑指南"><a href="#避坑指南" class="headerlink" title="避坑指南"></a>避坑指南</h2><p>这样配置完成后，在开发阶段，我们就可以在这个项目中预览我们 RN 开发的页面了，它的热更新也是没有问题的。</p>
-<p>但是，在我一次测试中，RN 端如果有报错，模拟器上如果我们显示了 LogBox 的话，下次热更新生效前，iOS App 就会崩溃。</p>
-<p>经过排查后，发现是 iOS 这边 React Native 的包里，如下这段代码出现了问题：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- (<span class="type">void</span>)dealloc</span><br><span class="line">&#123;</span><br><span class="line">    [RCTSharedApplication().delegate.window makeKeyWindow];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>原因是我们新创建的 iOS 工程里，window 已经不再 AppDelegate 类中有声明了，我们可以在 AppDelegate 里声明一下：<code>var window: UIWindow?</code>,</p>
-<p>这样，我们就可以在原生 iOS 项目里开发 RN 了。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>整个集成过程并不难，也遇到了两个比较坑的点，一是 cocoapods 的依赖文件一开始参考的 RN 中文网，估计是很久以前的版本了，怎么都成功不了；二是遇到热更新的问题， 在经过调试后，也顺利解决了。</p>
-<p>开发阶段我们就去加载 bundle 的地址是没有问题的；如果是线上版本，混合开发模式应该是要有一套下载 bundle 的策略，让 App 去加载本地 bundle，这又是个值得去学习的点了。</p>
-<p>这也让我理解了为什么 RN 能够热更新了，bundle 就是个 js 文件，我们只要替换这个文件地址或者文件就能实现应用的更新。</p>
-<p>RN 的出现确实让前端繁荣了一段时间，但是这究竟是好事还是坏事呢，前端已死？客户端已死？</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" data-id="clgvmn46x000ebhoffsva3z9o" data-title="iOS Swift 工程集成 React Native" class="article-share-link">Teilen</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li></ul>
 
     </footer>
   </div>
@@ -752,7 +756,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 16.67px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 10px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 15px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 20px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 15px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 10px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
     </div>
   </div>
 
@@ -761,7 +765,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archiv</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2023/04/">四月 2023</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2023/05/">五月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2023/04/">四月 2023</a></li></ul>
     </div>
   </div>
 
@@ -772,6 +776,10 @@
     <h3 class="widget-title">letzter Beitrag</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/">null 和 undefined 的区别：看看祖师爷是怎么说的</a>
+          </li>
         
           <li>
             <a href="/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/">在 gin 项目中使用 swagger</a>
@@ -787,10 +795,6 @@
         
           <li>
             <a href="/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/">Flutter 与 iOS 通信: BasicMessageChannel</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/">手写 min-vue-router</a>
           </li>
         
       </ul>
