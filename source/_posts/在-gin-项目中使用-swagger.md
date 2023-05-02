@@ -13,7 +13,7 @@ tags: [go, gin, swagger]
 
 `main` 函数上的注释，后续会成为文档的一部分，同样会成为文档一部分的是，下一部分 controller 上的注释。
 
-除了导入 swagger 相关的包，我们还需要导入项目的一个目录，如果不导入会遇到，swagger 网站打开后加载 json 失败的问题。
+除了导入 swagger 相关的包，我们还需要导入项目的一个目录，它是由 `swag init` 命令自动生成的，如果不导入会遇到，swagger 网站打开后加载 json 失败的问题。
 
 ```go
 package main
