@@ -85,7 +85,7 @@
         
   
     <h1 itemprop="name">
-      <a class="p-name article-title" href="/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/">React Strict Mode 的作用：为什么要 Render 两次</a>
+      <a class="p-name article-title" href="/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/">React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次</a>
     </h1>
   
 
@@ -110,13 +110,15 @@
 <h2 id="开发时，重新执行副作用"><a href="#开发时，重新执行副作用" class="headerlink" title="开发时，重新执行副作用"></a>开发时，重新执行副作用</h2><p>这就是本文标题里提到的问题。</p>
 <p>官方的错误代码是一个连接聊天室的应用的例子，它犯的错误是没有在适合的时候断开连接。</p>
 <p>两次执行副作用，如果我们没有在 <code>useEffect</code> 的 <code>return</code> 函数里断开连接，会导致有两次连接，真实场景下应该是会报错的，我们可以提前发现这种漏洞。</p>
+<p>一般我们的应用会在 <code>useEffect</code> 里发送网络请求，这时候如果不知道严格模式的小伙伴可能就会慌了，以为是哪里写了 bug。</p>
+<p>而我们如果知道了严格模式的这一现象，而且 build 后并不会有这个问题，我们就不会慌了。</p>
 <h2 id="对被弃用的-API-发出警告"><a href="#对被弃用的-API-发出警告" class="headerlink" title="对被弃用的 API 发出警告"></a>对被弃用的 API 发出警告</h2><p>官方给了一些弃用的 API 作为例子，然而全都是 class 组件里的，真的已经很少用了。</p>
 <p>我们简单了解一下严格模式的这个作用即可，如果碰到旧项目里出现问题，可以适当根据警告对代码做出修改。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clh7ppoor000abpoq0egv67st" data-title="React Strict Mode 的作用：为什么要 Render 两次" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clh7qaq41000abdq936ob3pio" data-title="React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次" class="article-share-link">Teilen</a>
       
       
       
@@ -190,7 +192,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clh7ppop1000hbpoqftjveb8o" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clh7qaq46000hbdq94gsncr4d" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
       
       
       
@@ -240,7 +242,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clh7ppop4000kbpoq5ncxge45" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clh7qaq48000kbdq93qyxdl95" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
       
       
       
@@ -299,7 +301,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clh7ppooq0009bpoq07lwea0q" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clh7qaq400009bdq925qub97z" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
       
       
       
@@ -353,7 +355,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clh7ppoom0005bpoqfyg82jgk" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clh7qaq3x0005bdq9d7ly1bko" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -417,7 +419,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clh7ppook0004bpoqflqt9y34" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clh7qaq3w0004bdq9ep8i8b35" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -499,7 +501,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clh7ppop9000qbpoqfgcb9kpl" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clh7qaq4b000qbdq987gocd3n" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
@@ -592,7 +594,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clh7ppoox000ebpoq20yibd36" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clh7qaq43000ebdq97wxmezt9" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
       
       
       
@@ -658,7 +660,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clh7ppoov000cbpoq36np2y4o" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clh7qaq42000cbdq91a5qcp2w" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
@@ -713,7 +715,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clh7ppoon0006bpoq9av864w5" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clh7qaq3y0006bdq9ex00gxvz" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
@@ -777,7 +779,7 @@
       <ul>
         
           <li>
-            <a href="/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/">React Strict Mode 的作用：为什么要 Render 两次</a>
+            <a href="/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/">React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次</a>
           </li>
         
           <li>
