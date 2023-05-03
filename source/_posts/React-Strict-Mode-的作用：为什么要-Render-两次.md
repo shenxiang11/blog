@@ -1,5 +1,5 @@
 ---
-title: React Strict Mode 的作用：为什么要 Render 两次
+title: React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次
 date: 2023-05-03 08:55:19
 tags: [React.js, Javascript]
 ---
@@ -40,6 +40,10 @@ tags: [React.js, Javascript]
 官方的错误代码是一个连接聊天室的应用的例子，它犯的错误是没有在适合的时候断开连接。
 
 两次执行副作用，如果我们没有在 `useEffect` 的 `return` 函数里断开连接，会导致有两次连接，真实场景下应该是会报错的，我们可以提前发现这种漏洞。
+
+一般我们的应用会在 `useEffect` 里发送网络请求，这时候如果不知道严格模式的小伙伴可能就会慌了，以为是哪里写了 bug。
+
+而我们如果知道了严格模式的这一现象，而且 build 后并不会有这个问题，我们就不会慌了。
 
 
 ## 对被弃用的 API 发出警告
