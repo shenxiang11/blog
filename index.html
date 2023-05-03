@@ -71,6 +71,65 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-React-Strict-Mode-的作用：为什么要-Render-两次" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" class="article-date">
+  <time class="dt-published" datetime="2023-05-03T08:55:19.000Z" itemprop="datePublished">2023-05-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/">React Strict Mode 的作用：为什么要 Render 两次</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>目前，React 的脚手架创建出来的项目的根组件会被 StrictMode 包裹，官方的说法是它可以让我们在开发期间尽早地发现常见的 bug。</p>
+<p>总体来说，它可以：</p>
+<ul>
+<li>在整个组件树中生效。</li>
+<li>也可以让一部分组件树开启严格模式。</li>
+<li>开发期间会有两次渲染，我们可以发现一些错误。</li>
+<li>开发期间副作用会被重新执行，我们可以发现一些错误。</li>
+<li>严格模式会对被弃用的 API 发出警告，我们可以做一些修改。</li>
+</ul>
+<h2 id="全局严格模式和局部严格模式"><a href="#全局严格模式和局部严格模式" class="headerlink" title="全局严格模式和局部严格模式"></a>全局严格模式和局部严格模式</h2><p>我们只需要在需要严格模式的地方，将组件用 <code>&lt;StrictMode&gt;</code> 包裹即可，其实如果我们的项目没有什么历史报复的话，我们使用全局模式即可。</p>
+<p>是否要开启全局模式，取决与你或你的团队是否会犯一些低级错误，需不需要对即将弃用的 API 发出警告。</p>
+<p>官方提到的注意事项是，如果一个 React App 由两个团队维护的话，需要达成共识，因为一旦启用严格模式，从启用严格模式的组件开始，其子组件是无法退出严格模式的。</p>
+<h2 id="开发时，两次渲染"><a href="#开发时，两次渲染" class="headerlink" title="开发时，两次渲染"></a>开发时，两次渲染</h2><p>官方有一个犯错误的示例代码，它对 <code>props</code> 上传入的一个 <code>Array</code> 类型的数据做了 <code>push</code> 操作，严格模式的两次渲染就会 <code>push</code> 两次，我们就可以及时从界面上发现我们的错误。</p>
+<p>这里吐槽一下，自己和身边同事还没有发现会这样写 react 代码的，但是这个作用聊胜于无吧。</p>
+<h2 id="开发时，重新执行副作用"><a href="#开发时，重新执行副作用" class="headerlink" title="开发时，重新执行副作用"></a>开发时，重新执行副作用</h2><p>这就是本文标题里提到的问题。</p>
+<p>官方的错误代码是一个连接聊天室的应用的例子，它犯的错误是没有在适合的时候断开连接。</p>
+<p>两次执行副作用，如果我们没有在 <code>useEffect</code> 的 <code>return</code> 函数里断开连接，会导致有两次连接，真实场景下应该是会报错的，我们可以提前发现这种漏洞。</p>
+<h2 id="对被弃用的-API-发出警告"><a href="#对被弃用的-API-发出警告" class="headerlink" title="对被弃用的 API 发出警告"></a>对被弃用的 API 发出警告</h2><p>官方给了一些弃用的 API 作为例子，然而全都是 class 组件里的，真的已经很少用了。</p>
+<p>我们简单了解一下严格模式的这个作用即可，如果碰到旧项目里出现问题，可以适当根据警告对代码做出修改。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clh7ppoor000abpoq0egv67st" data-title="React Strict Mode 的作用：为什么要 Render 两次" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/React-js/" rel="tag">React.js</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-null-和-undefined-的区别：看看祖师爷是怎么说的" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" class="article-date">
@@ -94,26 +153,26 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h2 id="前言：困惑的产生"><a href="#前言：困惑的产生" class="headerlink" title="前言：困惑的产生"></a>前言：困惑的产生</h2><p>平时，我们在使用 Javascript 时，<code>undefined</code> 和 <code>null</code> <strong>几乎</strong>没有区别。</p>
-<p>而在使用 TS 时，我们有明确的可以知道，它们是完全两种不同的类型，我可以互相赋值，在使用时并不完全等价，这就对我们的使用造成了困惑：到底什么时候用哪个，到底有什么区别。</p>
+<p>而在使用 TS 时，我们又明确的可以知道，它们是完全两种不同的类型，不可以互相赋值，在使用时并不完全等价，这就对我们的使用造成了困惑：到底什么时候用哪个，到底有什么区别。</p>
 <p>据我所知，目前 JS 是唯一一个拥有两个表示“空”的类型的语言。</p>
 <h2 id="了解历史"><a href="#了解历史" class="headerlink" title="了解历史"></a>了解历史</h2><p>查阅了一些资料，了解到，最早的 js 的版本中，是只有 <code>null</code> 的，JS 的一些设计参照了其他语言，而 null 在类型转换时可以转换为 0。</p>
 <p>在 C 语言中，函数执行成功或是失败是人为约定的，比如比较常见的约定是执行成功返回 0，失败则返回其他数字。</p>
 <p>而如果我们的 JS 也是这样，null 在自动转换为 0 的时候，往往不容易发现错误。</p>
 <p>不知道是不是这个原因，Brendan Eich 觉得 <code>null</code> 不够好， 又在后续的版本中又设计了一个 <code>undefined</code>，而且已经添加了并被广泛使用。</p>
-<p><code>undefined</code> 在转换成数字类型时，回返回 <code>NaN</code>，这是它们直接一个明显的区别。</p>
+<p><code>undefined</code> 在转换成数字类型时，返回 <code>NaN</code>，这是它们直接一个明显的区别。</p>
 <h2 id="为什么大厂里不允许显示使用-undefined"><a href="#为什么大厂里不允许显示使用-undefined" class="headerlink" title="为什么大厂里不允许显示使用 undefined"></a>为什么大厂里不允许显示使用 <code>undefined</code></h2><p>看过一些分享，说大厂里不允许直接使用 <code>undefined</code>，而是使用 <code>void 0</code> 来代替，它的返回结果是 <code>undefined</code>。</p>
 <p>因为，<code>undefined</code> 不是 JS 里的关键字，它是 <code>window.undefined</code>，即 window 上的一个变量，在现代的 JS 中，它被属性描述符号限制了不可修改了，避免我们犯低级错误。</p>
-<p>而在非全局作用域下，我们依然可以 <code>let undefined = xxx</code> 这还是需要小心的，我们不妨学习大厂的做法，在 code review 时，避免团队里出现显示使用 undefined 的代码。</p>
+<p>而在非全局作用域下，我们依然可以 <code>let undefined = xxx</code> 这还是需要小心的，我们不妨学习大厂的做法，在 code review 时，避免团队里出现显示使用 <code>undefined</code> 的代码。</p>
 <p><code>undefined</code> 是一个变量，<code>null</code> 是一个关键字，这是它们的第二个区别。</p>
 <h2 id="看看祖师爷怎么说"><a href="#看看祖师爷怎么说" class="headerlink" title="看看祖师爷怎么说"></a>看看祖师爷怎么说</h2><p>截图是 2015 年的一则推文，地址是：<a target="_blank" rel="noopener" href="https://twitter.com/BrendanEich/status/617450289889607681">https://twitter.com/BrendanEich/status/617450289889607681</a></p>
 <p><img src="/blog/resources/2023-05/01.png"></p>
-<p>大致意思是一个开发者问为什么 <code>typeof null</code> 的结果是 <code>object</code>，祖师爷首先恢复力，<code>null</code> 表示 <code>no object</code>, <code>undefined</code> 表示 <code>no value</code>。</p>
+<p>大致意思是一个开发者问为什么 <code>typeof null</code> 的结果是 <code>object</code>，祖师爷首先回复了，<code>null</code> 表示 <code>no object</code>, <code>undefined</code> 表示 <code>no value</code>。</p>
 <p>随后回答了这个问题，表示 <code>typeof null</code> 的结果是 <code>object</code> 是一个漏洞。</p>
 <p>所以第三个区别是 <code>typeof null</code> 的结果是 <code>object</code>，而 <code>typeof undefined</code> 是 <code>undefined</code>。</p>
 <h2 id="总结：目前前端环境里的表现"><a href="#总结：目前前端环境里的表现" class="headerlink" title="总结：目前前端环境里的表现"></a>总结：目前前端环境里的表现</h2><p>我们知道：</p>
 <ul>
 <li>转换成 bool 时，它们都是 false。</li>
-<li>如果我们仅声明一个变量，为赋值，它的值是 <code>undefined</code>，对象的没有赋值的属性也是一样。</li>
+<li>如果我们仅声明一个变量，未赋值，它的值是 <code>undefined</code>，对象的没有赋值的属性也是一样。</li>
 <li>JS 函数默认的返回值是 <code>undefined</code>。</li>
 <li>原型链的终点是 <code>null</code>。</li>
 <li>调用函数时，没有传入的参数会是 <code>undefined</code>。</li>
@@ -131,7 +190,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clh5qy5eu000gbqot2gy200xi" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clh7ppop1000hbpoqftjveb8o" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
       
       
       
@@ -181,7 +240,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clh5qy5ew000jbqot570l8zz2" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clh7ppop4000kbpoq5ncxge45" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
       
       
       
@@ -240,7 +299,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clh5qy5ep0009bqotg5s58xzc" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clh7ppooq0009bpoq07lwea0q" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
       
       
       
@@ -294,7 +353,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clh5qy5el0005bqot3vu1b7wl" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clh7ppoom0005bpoqfyg82jgk" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -358,7 +417,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clh5qy5ek0004bqot52n75keg" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clh7ppook0004bpoqflqt9y34" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -440,7 +499,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clh5qy5fe001zbqotbhlrgzwl" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clh7ppop9000qbpoqfgcb9kpl" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
@@ -533,7 +592,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clh5qy5er000cbqot9jwvdicw" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clh7ppoox000ebpoq20yibd36" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
       
       
       
@@ -599,7 +658,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clh5qy5eq000abqot2xz402pb" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clh7ppoov000cbpoq36np2y4o" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
@@ -654,71 +713,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clh5qy5en0006bqotfw7466p6" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/17/Leetcode-709-%E8%BD%AC%E6%8D%A2%E6%88%90%E5%B0%8F%E5%86%99%E5%AD%97%E6%AF%8D-%E7%9C%8B%E7%9C%8B-ASCII-%E7%A0%81%E7%9A%84%E5%B7%A7%E5%A6%99%E8%AE%BE%E8%AE%A1/" data-id="clh7ppoon0006bpoq9av864w5" data-title="力扣 709: 转换成小写字母, 看看 ASCII 码的巧妙设计" class="article-share-link">Teilen</a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-如何命名-ts-中的类型" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" class="article-date">
-  <time class="dt-published" datetime="2023-04-16T13:12:16.000Z" itemprop="datePublished">2023-04-16</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/">如何命名 ts 中的类型</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="不要使用复数形式，除非它真的是一个数组"><a href="#不要使用复数形式，除非它真的是一个数组" class="headerlink" title="不要使用复数形式，除非它真的是一个数组"></a>不要使用复数形式，除非它真的是一个数组</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// bad</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Routes</span> = <span class="string">&quot;/user&quot;</span> | <span class="string">&quot;/admin/user&quot;</span> | <span class="string">&quot;/admin&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">goToRoute</span> = (<span class="params">route: Routes</span>) =&gt; &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// good</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Route</span> = <span class="string">&quot;/user&quot;</span> | <span class="string">&quot;/admin/user&quot;</span> | <span class="string">&quot;/admin&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="title function_">goToRoute</span> = (<span class="params">route: Route</span>) =&gt; &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>上方的 <code>goToRoute</code> 接收一个 <code>Routes</code> 会变得很奇怪，而且 <code>Route</code> 如果组成数组，它的类型是 <code>Route[]</code>，我们可以使用类型别名 <code>type Routes = Route[]</code> 来代替。</p>
-<h2 id="在变量名和类型之间，注意区分大小写，这样有助于语法高亮"><a href="#在变量名和类型之间，注意区分大小写，这样有助于语法高亮" class="headerlink" title="在变量名和类型之间，注意区分大小写，这样有助于语法高亮"></a>在变量名和类型之间，注意区分大小写，这样有助于语法高亮</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// bad</span></span><br><span class="line"><span class="keyword">type</span> route = <span class="string">&quot;/user&quot;</span> | <span class="string">&quot;/admin/user&quot;</span> | <span class="string">&quot;/admin&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">route</span>: route = <span class="string">&#x27;/user&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// good</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">Route</span> = <span class="string">&quot;/user&quot;</span> | <span class="string">&quot;/admin/user&quot;</span> | <span class="string">&quot;/admin&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="attr">route</span>: <span class="title class_">Route</span> = <span class="string">&#x27;/user&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<p>有时候，编辑器可能会混淆类型和变量名，使得编辑器的提示不正确。</p>
-<h2 id="使用有意义的泛型名称"><a href="#使用有意义的泛型名称" class="headerlink" title="使用有意义的泛型名称"></a>使用有意义的泛型名称</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// bad</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">Response</span>&lt;T, U&gt; = &#123;</span><br><span class="line">    <span class="attr">data</span>: T;</span><br><span class="line">    <span class="attr">error</span>: U;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// good</span></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">type</span> <span class="title class_">Response</span>&lt;<span class="title class_">TData</span>, <span class="title class_">UError</span>&gt; = &#123;</span><br><span class="line">    <span class="attr">data</span>: <span class="title class_">TData</span>;</span><br><span class="line">    <span class="attr">error</span>: <span class="title class_">UError</span>;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
-
-<p>这样，类型的定义与作用会更加清晰明确，便于阅读。</p>
-<h2 id="不需要使用前缀来描述类型是通过-type-或者-interface-定义的"><a href="#不需要使用前缀来描述类型是通过-type-或者-interface-定义的" class="headerlink" title="不需要使用前缀来描述类型是通过 type 或者 interface 定义的"></a>不需要使用前缀来描述类型是通过 <code>type</code> 或者 <code>interface</code> 定义的</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// bad</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">TUser</span> = &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="built_in">string</span>;</span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">IOriganization</span> &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="built_in">string</span>;</span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// good</span></span><br><span class="line"><span class="keyword">type</span> <span class="title class_">User</span> = &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="built_in">string</span>;</span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">interface</span> <span class="title class_">Origanization</span> &#123;</span><br><span class="line">    <span class="attr">id</span>: <span class="built_in">string</span>;</span><br><span class="line">    <span class="attr">name</span>: <span class="built_in">string</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>想像一下，如果我们像重构 <code>IOriganization</code> 到 <code>TOriganization</code>，就需要修改程序用到的每一处，如果没有前缀的话，我们只需要修改类型定义的地方。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/16/%E5%A6%82%E4%BD%95%E5%91%BD%E5%90%8D-ts-%E4%B8%AD%E7%9A%84%E7%B1%BB%E5%9E%8B/" data-id="clh5qy5ex000kbqot0kbab2yn" data-title="如何命名 ts 中的类型" class="article-share-link">Teilen</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li></ul>
 
     </footer>
   </div>
@@ -746,7 +745,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/gin/" rel="tag">gin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/go/" rel="tag">go</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/swagger/" rel="tag">swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">微信小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-js/" rel="tag">React.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/gin/" rel="tag">gin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/go/" rel="tag">go</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/swagger/" rel="tag">swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">微信小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
     </div>
   </div>
 
@@ -756,7 +755,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 15px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 20px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 15px;">React Native</a> <a href="/blog/tags/Swift/" style="font-size: 20px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 10px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 20px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 15px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 20px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/React-js/" style="font-size: 10px;">React.js</a> <a href="/blog/tags/Swift/" style="font-size: 16.67px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 10px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 16.67px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
     </div>
   </div>
 
@@ -778,6 +777,10 @@
       <ul>
         
           <li>
+            <a href="/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/">React Strict Mode 的作用：为什么要 Render 两次</a>
+          </li>
+        
+          <li>
             <a href="/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/">null 和 undefined 的区别：看看祖师爷是怎么说的</a>
           </li>
         
@@ -791,10 +794,6 @@
         
           <li>
             <a href="/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/">Flutter 与 iOS 通信：MethodChannel</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/">Flutter 与 iOS 通信: BasicMessageChannel</a>
           </li>
         
       </ul>
