@@ -95,15 +95,15 @@
       
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>五一在家，看了之前 Anthony Fu 的直播录播，内容是制作一个跨路由的共享元素的动画的组件库，大致听了一下思路，了解了其原理，自己便尝试利用他后来发布的这个组件库做了一个动画效果。</p>
 <p><img src="/blog/resources/2023-05/02.gif"></p>
-<h2 id="现聊聊这个组件库的思路"><a href="#现聊聊这个组件库的思路" class="headerlink" title="现聊聊这个组件库的思路"></a>现聊聊这个组件库的思路</h2><p>最早，Fu 分享的是 FLIP 的思路可以做。FLIP 大致是把元送从最终位置移动到初始位置，由于还没有发生渲染，用户是不知道元素已经到达最终位置了，然后再利用动画将元素播放到最终位置。</p>
+<h2 id="现聊聊这个组件库的思路"><a href="#现聊聊这个组件库的思路" class="headerlink" title="现聊聊这个组件库的思路"></a>现聊聊这个组件库的思路</h2><p>最早，Fu 分享的是 FLIP 的思路。FLIP 大致是把元送从最终位置移动到初始位置，由于还没有发生渲染，用户是不知道元素已经到达最终位置了，然后再利用动画将元素播放到最终位置。</p>
 <p>这就是 FLIP 的大致原理，具体的可以留到下次手撸一个 FLIP 动画效果后再分享。</p>
-<p>这中对于简单元素的效果，还是能够接受的，但是对于整个组件做这种 FLIP 动画，由于其实是两个组件，它们直接的状态是不能直接共享的，当然你可以使用状态管理解决，但是为了一个动画效果，这太“重”了。</p>
+<p>这个方案对于简单元素的效果，还是能够接受的，但是如果对于整个组件做这种 FLIP 动画，由于其实是两个组件，它们的状态是不能直接共享的，当然你可以使用状态管理解决，但是为了一个动画效果，这太“重”了。</p>
 <p>Fu 的思路是将整个组件使用 Vue3 的 Teleport，把组件从组件树上挪动，像是星际争霸游戏里人族建筑可以从地上飞起现浮动在天上，再移动到目标位置下降的过程，非常形象生动。</p>
 <p>虽然，这是一个 Vue 的库，应用到其他框架里，原理上也是没有问题的。</p>
 <h2 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h2><p>我发现组件状态虽然能够共享了，但是你如果注意到我的截图后，你会发现组件的动画又重新开始播放了，这是由于我用的 CSS 做的动画，组件在 dom 中移动后导致动画重新开始。</p>
 <p>这就意味着，我至少需要额外的工作去记录一下动画播放的位置，下次重新播放是需要从这个位置开始，同样也会新增一点复杂性。我这一次不打算优化了。</p>
 <h2 id="体验"><a href="#体验" class="headerlink" title="体验"></a>体验</h2><p>可以说这个动画效果已经非常接近原生了，这种动画效果 Flutter 里和 Swift 里都有同一个称呼 Hero，Flutter 里是官方支持的原生组件，Swift 里则是第三方库。</p>
-<p>在之前做原生开发时，就觉得效果非常的神奇，但是原理基本不知道。没想动 Web 里，同样能够实现这种效果，相信 Web 开发会越来越好。</p>
+<p>在之前做原生开发时，就觉得效果非常的神奇，但是原理基本不知道。没想动 Web 里，同样能够实现这种效果，相信 Web 开发的应用体验会越来越好。</p>
 <h2 id="额外收获总结"><a href="#额外收获总结" class="headerlink" title="额外收获总结"></a>额外收获总结</h2><ul>
 <li>Vue 框架，可以在 Style 里使用 <code>v-bind(x)</code> 绑定变量，之前知道这个功能没有试过，这次应用这个来控制动画需要移动的位置。</li>
 <li>不是第一次使用 tailwindcss 了，发现用来写点小项目，还是非常方便的，但是好多样式对应的缩写不是很能够对应的上。</li>
@@ -114,7 +114,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/04/%E4%BB%BF%E4%B8%80%E4%B8%AA-AppStore-%E6%95%88%E6%9E%9C/" data-id="clh8m1lnn000jbxq9fqa8esp2" data-title="仿一个 AppStore 效果" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/04/%E4%BB%BF%E4%B8%80%E4%B8%AA-AppStore-%E6%95%88%E6%9E%9C/" data-id="clh8n2evd000jebomh6ke9flt" data-title="仿一个 AppStore 效果" class="article-share-link">Teilen</a>
       
       
       
@@ -175,7 +175,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clh8m1lnh000abxq9g9d2d5rx" data-title="React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clh8n2ev5000aebomcbai6rvb" data-title="React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次" class="article-share-link">Teilen</a>
       
       
       
@@ -249,7 +249,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clh8m1lnm000hbxq9ckzl8nqs" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clh8n2evc000hebomg2fz8qwl" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
       
       
       
@@ -299,7 +299,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clh8m1lnp000lbxq94ldt2jtb" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clh8n2evf000lebomatq12vym" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
       
       
       
@@ -358,7 +358,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clh8m1lng0009bxq97ssl7nb7" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clh8n2ev40009ebomc7rk6b8w" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
       
       
       
@@ -412,7 +412,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clh8m1lne0005bxq9hjuodzou" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clh8n2ev10005ebomad38g72r" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -476,7 +476,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clh8m1lnc0004bxq9gsc0ag6i" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clh8n2euz0004ebom43ax6dn1" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -558,7 +558,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clh8m1lnt000tbxq97njd65y0" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clh8n2evk000tebomcvps4uqj" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
@@ -651,7 +651,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clh8m1lnj000ebxq96b1w2o03" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clh8n2ev8000eebom04u65lm8" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
       
       
       
@@ -717,7 +717,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clh8m1lni000cbxq933w08vz3" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/Swift-%E5%8E%9F%E7%94%9F%E5%BA%94%E7%94%A8%E4%B8%8E-WebView-%E4%BA%92%E7%9B%B8%E9%80%9A%E4%BF%A1/" data-id="clh8n2ev7000cebom577vbqob" data-title="Swift 原生应用与 WebView 互相通信" class="article-share-link">Teilen</a>
       
       
       
