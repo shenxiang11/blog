@@ -6,16 +6,16 @@
   
   <title>实践一个大文件上传 | 前端芯事</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="提前看最终效果 功能要点前端：  大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。 所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。 通过 input type&#x3D;&quot;file&quot; 接收用户选择的文件。 点击上传时，将完整文件首先做一次信息摘">
+  <meta name="description" content="提前看最终效果 功能要点大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。 所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。 前端：  通过 input type&#x3D;&quot;file&quot; 接收用户选择的文件。 点击上传时，将完整文件首先做一次信息摘">
 <meta property="og:type" content="article">
 <meta property="og:title" content="实践一个大文件上传">
 <meta property="og:url" content="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/index.html">
 <meta property="og:site_name" content="前端芯事">
-<meta property="og:description" content="提前看最终效果 功能要点前端：  大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。 所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。 通过 input type&#x3D;&quot;file&quot; 接收用户选择的文件。 点击上传时，将完整文件首先做一次信息摘">
+<meta property="og:description" content="提前看最终效果 功能要点大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。 所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。 前端：  通过 input type&#x3D;&quot;file&quot; 接收用户选择的文件。 点击上传时，将完整文件首先做一次信息摘">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-05/03.gif">
 <meta property="article:published_time" content="2023-05-07T12:56:17.000Z">
-<meta property="article:modified_time" content="2023-05-07T05:56:28.829Z">
+<meta property="article:modified_time" content="2023-05-07T06:00:43.418Z">
 <meta property="article:author" content="芯芯爸爸">
 <meta property="article:tag" content="Javascript">
 <meta property="article:tag" content="go">
@@ -100,10 +100,9 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h2 id="提前看最终效果"><a href="#提前看最终效果" class="headerlink" title="提前看最终效果"></a>提前看最终效果</h2><p><img src="/blog/resources/2023-05/03.gif"></p>
-<h2 id="功能要点"><a href="#功能要点" class="headerlink" title="功能要点"></a>功能要点</h2><p>前端：</p>
+<h2 id="功能要点"><a href="#功能要点" class="headerlink" title="功能要点"></a>功能要点</h2><p>大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。 所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。</p>
+<p>前端：</p>
 <ul>
-<li>大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。</li>
-<li>所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。</li>
 <li>通过 <code>input type=&quot;file&quot;</code> 接收用户选择的文件。</li>
 <li>点击上传时，将完整文件首先做一次信息摘要算法，我使用的是 SHA-256。信息摘要的意思是无论输入的消息有多长，计算出来的消息摘要的长度总是固定的。这样我们在上传前，可以先做一次校验，判断之前是否已经上传过了，上传过了的文件可以打到“秒传”的效果，但是这次我没有做这个，其实做起来也容易，我这次计算这个值的目的是以这个值作为存放分片的目录名，方便后续操作分片。</li>
 <li>利用 Blob 支持的 slice 方法，可以将用户的文件分片，具体分割的大小可以根据网络和文件大小综合决定，由于只是一个演示，我使用了一个固定值。</li>
@@ -134,7 +133,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" data-id="clhd040iw000oc8oxh23paenb" data-title="实践一个大文件上传" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" data-id="clhd09h68000ocbolcgl2aq0b" data-title="实践一个大文件上传" class="article-share-link">Teilen</a>
       
       
       

@@ -94,10 +94,9 @@
     <div class="e-content article-entry" itemprop="articleBody">
       
         <h2 id="提前看最终效果"><a href="#提前看最终效果" class="headerlink" title="提前看最终效果"></a>提前看最终效果</h2><p><img src="/blog/resources/2023-05/03.gif"></p>
-<h2 id="功能要点"><a href="#功能要点" class="headerlink" title="功能要点"></a>功能要点</h2><p>前端：</p>
+<h2 id="功能要点"><a href="#功能要点" class="headerlink" title="功能要点"></a>功能要点</h2><p>大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。 所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。</p>
+<p>前端：</p>
 <ul>
-<li>大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。</li>
-<li>所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。</li>
 <li>通过 <code>input type=&quot;file&quot;</code> 接收用户选择的文件。</li>
 <li>点击上传时，将完整文件首先做一次信息摘要算法，我使用的是 SHA-256。信息摘要的意思是无论输入的消息有多长，计算出来的消息摘要的长度总是固定的。这样我们在上传前，可以先做一次校验，判断之前是否已经上传过了，上传过了的文件可以打到“秒传”的效果，但是这次我没有做这个，其实做起来也容易，我这次计算这个值的目的是以这个值作为存放分片的目录名，方便后续操作分片。</li>
 <li>利用 Blob 支持的 slice 方法，可以将用户的文件分片，具体分割的大小可以根据网络和文件大小综合决定，由于只是一个演示，我使用了一个固定值。</li>
@@ -128,7 +127,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" data-id="clhd040iw000oc8oxh23paenb" data-title="实践一个大文件上传" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" data-id="clhd09h68000ocbolcgl2aq0b" data-title="实践一个大文件上传" class="article-share-link">Teilen</a>
       
       
       
@@ -205,7 +204,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/" data-id="clhd040ji002lc8ox6wdqdrj0" data-title="震惊，这段代码居然有 4 种执行结果" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/" data-id="clhd09h6f000xcbolh5mreczi" data-title="震惊，这段代码居然有 4 种执行结果" class="article-share-link">Teilen</a>
       
       
       
@@ -262,7 +261,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/04/%E4%BB%BF%E4%B8%80%E4%B8%AA-AppStore-%E6%95%88%E6%9E%9C/" data-id="clhd040it000jc8ox7zxo205j" data-title="仿一个 AppStore 效果" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/04/%E4%BB%BF%E4%B8%80%E4%B8%AA-AppStore-%E6%95%88%E6%9E%9C/" data-id="clhd09h65000jcbol6s6cclgl" data-title="仿一个 AppStore 效果" class="article-share-link">Teilen</a>
       
       
       
@@ -323,7 +322,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clhd040in000ac8ox3aejer0m" data-title="React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clhd09h5z000acbol2nbf00tf" data-title="React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次" class="article-share-link">Teilen</a>
       
       
       
@@ -397,7 +396,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clhd040is000hc8ox6k7eahdu" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clhd09h64000hcbol5d96g45d" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
       
       
       
@@ -447,7 +446,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clhd040iu000lc8ox2ufb71aw" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clhd09h66000lcbol3wi44dmw" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
       
       
       
@@ -506,7 +505,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clhd040im0009c8oxaywsbygd" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clhd09h5y0009cbole3205zml" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
       
       
       
@@ -560,7 +559,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clhd040ik0005c8ox5rr170vv" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clhd09h5v0005cbol206k6u4p" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -624,7 +623,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clhd040ij0004c8ox18uh8arg" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clhd09h5u0004cbol9txi9zo3" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -706,7 +705,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clhd040iz000uc8ox4g1y0xq3" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clhd09h6b000ucbold9xedang" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
