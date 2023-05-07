@@ -119,11 +119,16 @@
 
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次实践，只是对分片上传做了简单的实现，比较重点的只有一个 Blob 的 slice 方法。</p>
 <p>后续可以再去了解一下常见的信息摘要算法和去实现一下自己的异步池。</p>
+<p>还留有一些疑问：</p>
+<ul>
+<li>不同文件的 hash 是否会计算出来同一个值，如果会那该怎么解决？</li>
+<li>HTTP 支持请求范围，允许服务器只发送 HTTP 消息的一部分到客户端。有没有相反的方式，可以每次发送一部分文件分片到服务器？</li>
+</ul>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" data-id="clhd0085c000obqok8gac3fto" data-title="实践一个大文件上传" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" data-id="clhd040iw000oc8oxh23paenb" data-title="实践一个大文件上传" class="article-share-link">Teilen</a>
       
       
       
@@ -200,7 +205,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/" data-id="clhd0085i000xbqok4fcchytx" data-title="震惊，这段代码居然有 4 种执行结果" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/" data-id="clhd040ji002lc8ox6wdqdrj0" data-title="震惊，这段代码居然有 4 种执行结果" class="article-share-link">Teilen</a>
       
       
       
@@ -257,7 +262,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/04/%E4%BB%BF%E4%B8%80%E4%B8%AA-AppStore-%E6%95%88%E6%9E%9C/" data-id="clhd00858000jbqok350achqq" data-title="仿一个 AppStore 效果" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/04/%E4%BB%BF%E4%B8%80%E4%B8%AA-AppStore-%E6%95%88%E6%9E%9C/" data-id="clhd040it000jc8ox7zxo205j" data-title="仿一个 AppStore 效果" class="article-share-link">Teilen</a>
       
       
       
@@ -318,7 +323,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clhd00855000gbqoke03n633w" data-title="React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clhd040in000ac8ox3aejer0m" data-title="React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次" class="article-share-link">Teilen</a>
       
       
       
@@ -392,7 +397,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clhd00856000hbqok1scj3vlt" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clhd040is000hc8ox6k7eahdu" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
       
       
       
@@ -442,7 +447,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clhd00859000lbqok4gyi6l9r" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clhd040iu000lc8ox2ufb71aw" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
       
       
       
@@ -501,7 +506,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clhd0084z0009bqok7g7caq9s" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clhd040im0009c8oxaywsbygd" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
       
       
       
@@ -555,7 +560,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clhd0084v0005bqokf9emcoh6" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clhd040ik0005c8ox5rr170vv" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -619,7 +624,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clhd0084u0004bqok2j6mais9" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clhd040ij0004c8ox18uh8arg" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -701,7 +706,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clhd0085e000ubqokgybfa2n8" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clhd040iz000uc8ox4g1y0xq3" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
