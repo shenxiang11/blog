@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  
+  <title>实践一个大文件上传 | 前端芯事</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="提前看最终效果 功能要点前端：  大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。 所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。 通过 input type&#x3D;&quot;file&quot; 接收用户选择的文件。 点击上传时，将完整文件首先做一次信息摘">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实践一个大文件上传">
+<meta property="og:url" content="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/index.html">
+<meta property="og:site_name" content="前端芯事">
+<meta property="og:description" content="提前看最终效果 功能要点前端：  大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。 所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。 通过 input type&#x3D;&quot;file&quot; 接收用户选择的文件。 点击上传时，将完整文件首先做一次信息摘">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-05/03.gif">
+<meta property="article:published_time" content="2023-05-07T12:56:17.000Z">
+<meta property="article:modified_time" content="2023-05-07T05:53:30.296Z">
+<meta property="article:author" content="芯芯爸爸">
+<meta property="article:tag" content="Javascript">
+<meta property="article:tag" content="go">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shenxiang11.github.io/blog/resources/2023-05/03.gif">
+  
+    <link rel="alternate" href="/blog/atom.xml" title="前端芯事" type="application/atom+xml">
+  
+  
+    <link rel="shortcut icon" href="/blog/favicon.png">
+  
+  
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@0.0.71/index.min.css">
+
+  
+  
+<link rel="stylesheet" href="/blog/css/style.css">
+
+  
+    
+<link rel="stylesheet" href="/blog/fancybox/jquery.fancybox.min.css">
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/blog/" id="logo">前端芯事</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/blog/">Home</a>
+        
+          <a class="main-nav-link" href="/blog/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/blog/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Suche"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Suche"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://shenxiang11.github.io/blog"></form>
+      </div>
+    </div>
+  </div>
+</header>
+
+      <div class="outer">
+        <section id="main"><article id="post-大文件上传" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" class="article-date">
+  <time class="dt-published" datetime="2023-05-07T12:56:17.000Z" itemprop="datePublished">2023-05-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="p-name article-title" itemprop="headline name">
+      实践一个大文件上传
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="提前看最终效果"><a href="#提前看最终效果" class="headerlink" title="提前看最终效果"></a>提前看最终效果</h2><p><img src="/blog/resources/2023-05/03.gif"></p>
+<h2 id="功能要点"><a href="#功能要点" class="headerlink" title="功能要点"></a>功能要点</h2><p>前端：</p>
+<ul>
+<li>大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。</li>
+<li>所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。</li>
+<li>通过 <code>input type=&quot;file&quot;</code> 接收用户选择的文件。</li>
+<li>点击上传时，将完整文件首先做一次信息摘要算法，我使用的是 SHA-256。信息摘要的意思是无论输入的消息有多长，计算出来的消息摘要的长度总是固定的。这样我们在上传前，可以先做一次校验，判断之前是否已经上传过了，上传过了的文件可以打到“秒传”的效果，但是这次我没有做这个，其实做起来也容易，我这次计算这个值的目的是以这个值作为存放分片的目录名，方便后续操作分片。</li>
+<li>利用 Blob 支持的 slice 方法，可以将用户的文件分片，具体分割的大小可以根据网络和文件大小综合决定，由于只是一个演示，我使用了一个固定值。</li>
+<li>每一个分片可以额外计算一次信息摘要，每次上传分片前，也可以事先和服务端确认该分片之前是否上传过。每个分片传行地上传效率太低，全部一次上传可能对于服务器压力过大，我们可以使用异步任务池的概念控制并发数，这也是一个常见的考点，这次暂且使用第三方库 tiny-async-pool 快速把这个示例完成。</li>
+</ul>
+<p>服务端：</p>
+<ul>
+<li>实现静态文件服务，需要将用户上传的文件，以服务形式提供出来，方便验证上传的文件。</li>
+<li>实现验证分片是否上传的接口，在后端每个分片以 tmp&#x2F;[文件hash]&#x2F;[分片序号]-[分片hash] 的形式存在，我们可以比较容易得到分片是否存在。</li>
+<li>实现上传分片接口，这个接口只需要按照规则，写文件即可。</li>
+<li>实现合并接口，由于前端分片后是并发上传，我们无法保证切片到达的顺序，所以需要等全部分片上传完成后，客户端通知后端进行合并。合并后可以由后端以同样的摘要算法计算一次，可以判断最后合并的文件是不是上传的同一个文件。</li>
+</ul>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;crypto/sha256&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/gin-contrib/cors&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/gin-gonic/gin&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;sort&quot;</span></span><br><span class="line">	<span class="string">&quot;strconv&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	router := gin.Default()</span><br><span class="line"></span><br><span class="line">	router.Use(cors.Default())</span><br><span class="line"></span><br><span class="line">	router.Static(<span class="string">&quot;/tmp&quot;</span>, <span class="string">&quot;./tmp&quot;</span>)</span><br><span class="line"></span><br><span class="line">	router.POST(<span class="string">&quot;/verify&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		index := c.PostForm(<span class="string">&quot;index&quot;</span>)</span><br><span class="line">		fileHash := c.PostForm(<span class="string">&quot;fileHash&quot;</span>)</span><br><span class="line">		sliceHash := c.PostForm(<span class="string">&quot;sliceHash&quot;</span>)</span><br><span class="line"></span><br><span class="line">		exist := isFileExist(fmt.Sprintf(<span class="string">&quot;tmp/%s/%s-%s&quot;</span>, fileHash, index, sliceHash))</span><br><span class="line"></span><br><span class="line">		c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">			<span class="string">&quot;exist&quot;</span>: exist,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	router.POST(<span class="string">&quot;/upload&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		index := c.PostForm(<span class="string">&quot;index&quot;</span>)</span><br><span class="line">		fileHash := c.PostForm(<span class="string">&quot;fileHash&quot;</span>)</span><br><span class="line">		sliceHash := c.PostForm(<span class="string">&quot;sliceHash&quot;</span>)</span><br><span class="line">		file, err := c.FormFile(<span class="string">&quot;file&quot;</span>)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		fullPath := fmt.Sprintf(<span class="string">&quot;tmp/%s/%s-%s&quot;</span>, fileHash, index, sliceHash)</span><br><span class="line"></span><br><span class="line">		err = c.SaveUploadedFile(file, fullPath)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		c.JSON(http.StatusOK, gin.H&#123;&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	router.POST(<span class="string">&quot;/merge&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		fileHash := c.PostForm(<span class="string">&quot;fileHash&quot;</span>)</span><br><span class="line">		dirname := fmt.Sprintf(<span class="string">&quot;tmp/%s&quot;</span>, fileHash)</span><br><span class="line">		dir, err := os.ReadDir(dirname)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		sort.SliceStable(dir, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="type">int</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">			x := strings.Split(dir[i].Name(), <span class="string">&quot;-&quot;</span>)</span><br><span class="line">			y := strings.Split(dir[j].Name(), <span class="string">&quot;-&quot;</span>)</span><br><span class="line"></span><br><span class="line">			nx, _ := strconv.Atoi(x[<span class="number">0</span>])</span><br><span class="line">			ny, _ := strconv.Atoi(y[<span class="number">0</span>])</span><br><span class="line">			<span class="keyword">return</span> nx &lt; ny</span><br><span class="line">		&#125;)</span><br><span class="line"></span><br><span class="line">		all := []<span class="type">byte</span>&#123;&#125;</span><br><span class="line">		<span class="keyword">for</span> _, file := <span class="keyword">range</span> dir &#123;</span><br><span class="line">			data, err := os.ReadFile(fmt.Sprintf(<span class="string">&quot;tmp/%s/%s&quot;</span>, fileHash, file.Name()))</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">					<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">				&#125;)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">			all = <span class="built_in">append</span>(all, data...)</span><br><span class="line">		&#125;</span><br><span class="line">		target := fmt.Sprintf(<span class="string">&quot;tmp/%s.mp4&quot;</span>, fileHash)</span><br><span class="line">		err = os.WriteFile(target, all, <span class="number">0666</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		h := sha256.New()</span><br><span class="line">		h.Write(all)</span><br><span class="line"></span><br><span class="line">		bs := h.Sum(<span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">		hash := fmt.Sprintf(<span class="string">&quot;%x&quot;</span>, bs)</span><br><span class="line">		<span class="keyword">if</span> hash == fileHash &#123;</span><br><span class="line">			err := os.RemoveAll(dirname)</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">					<span class="string">&quot;message&quot;</span>: <span class="string">&quot;目录删除失败&quot;</span>,</span><br><span class="line">				&#125;)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">			c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: <span class="string">&quot;大成功&quot;</span>,</span><br><span class="line">				<span class="string">&quot;url&quot;</span>:     <span class="string">&quot;http://127.0.0.1:8080/&quot;</span> + target,</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: <span class="string">&quot;hash 不一致&quot;</span>,</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	err := router.Run(<span class="string">&quot;:8080&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">println</span>(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">isFileExist</span><span class="params">(fileName <span class="type">string</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">	_, err := os.Stat(fileName)</span><br><span class="line">	<span class="keyword">return</span> err == <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">import asyncPool from &#x27;tiny-async-pool&#x27;</span><br><span class="line">import &#123; hash &#125; from &#x27;@/utils&#x27;</span><br><span class="line">import &#123; reactive, ref &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">const CHUNK_SIZE = 1024 * 512</span><br><span class="line"></span><br><span class="line">type Task = &#123;</span><br><span class="line">  index: number</span><br><span class="line">  blob: Blob</span><br><span class="line">  name: string</span><br><span class="line">  fileHash: string</span><br><span class="line">  sliceHash: string</span><br><span class="line">  isComplete: boolean</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const inputRef = ref&lt;HTMLInputElement | null&gt;(null)</span><br><span class="line">const tasks = reactive&lt;Task[]&gt;([])</span><br><span class="line">const url = ref(&#x27;&#x27;)</span><br><span class="line"></span><br><span class="line">async function uploadSingleFile() &#123;</span><br><span class="line">  let uploadedSize = 0</span><br><span class="line">  const file = inputRef?.value?.files?.[0]</span><br><span class="line">  if (!file) &#123;</span><br><span class="line">    return</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const fullHash = await hash(await file.arrayBuffer())</span><br><span class="line"></span><br><span class="line">  let index = 0</span><br><span class="line">  while (uploadedSize &lt; file.size) &#123;</span><br><span class="line">    index++</span><br><span class="line">    const fileChunk = file.slice(uploadedSize, uploadedSize + CHUNK_SIZE)</span><br><span class="line">    const sliceHash = await hash(await fileChunk.arrayBuffer())</span><br><span class="line"></span><br><span class="line">    tasks.push(&#123;</span><br><span class="line">      index,</span><br><span class="line">      blob: fileChunk,</span><br><span class="line">      fileHash: fullHash,</span><br><span class="line">      sliceHash: sliceHash,</span><br><span class="line">      name: file.name,</span><br><span class="line">      isComplete: false</span><br><span class="line">    &#125;)</span><br><span class="line">    uploadedSize += fileChunk.size</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  for await (const result of asyncPool(5, tasks, doTask)) &#123;</span><br><span class="line">    console.log(result)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const formData = new FormData()</span><br><span class="line">  formData.append(&#x27;fileHash&#x27;, fullHash)</span><br><span class="line">  const response = await fetch(&#x27;http://127.0.0.1:8080/merge&#x27;, &#123;</span><br><span class="line">    method: &#x27;POST&#x27;,</span><br><span class="line">    body: formData</span><br><span class="line">  &#125;)</span><br><span class="line">  const json = await response.json()</span><br><span class="line">  url.value = json.url</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function doTask(task: Task) &#123;</span><br><span class="line">  return new Promise(async (resolve, reject) =&gt; &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">      const formData = new FormData()</span><br><span class="line">      formData.append(&#x27;index&#x27;, task.index.toString())</span><br><span class="line">      formData.append(&#x27;name&#x27;, task.name)</span><br><span class="line">      formData.append(&#x27;fileHash&#x27;, task.fileHash)</span><br><span class="line">      formData.append(&#x27;sliceHash&#x27;, task.sliceHash)</span><br><span class="line"></span><br><span class="line">      const verifyResponse = await fetch(&#x27;http://127.0.0.1:8080/verify&#x27;, &#123;</span><br><span class="line">        method: &#x27;POST&#x27;,</span><br><span class="line">        body: formData</span><br><span class="line">      &#125;)</span><br><span class="line">      let message = await verifyResponse.json()</span><br><span class="line">      if (message.exist) &#123;</span><br><span class="line">        // 已上传</span><br><span class="line">        task.isComplete = true</span><br><span class="line">        resolve(&#x27;已上传，跳过这个 blob&#x27;)</span><br><span class="line">        return</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      // 未上传</span><br><span class="line">      formData.append(&#x27;file&#x27;, task.blob)</span><br><span class="line">      const response = await fetch(&#x27;http://127.0.0.1:8080/upload&#x27;, &#123;</span><br><span class="line">        method: &#x27;POST&#x27;,</span><br><span class="line">        body: formData</span><br><span class="line">      &#125;)</span><br><span class="line">      message = await response.json()</span><br><span class="line">      task.isComplete = true</span><br><span class="line">      resolve(message)</span><br><span class="line">    &#125; catch (error) &#123;</span><br><span class="line">      reject(error)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;main class=&quot;flex flex-col items-center gap-4&quot;&gt;</span><br><span class="line">    &lt;h1 class=&quot;text-3xl font-bold pt-4&quot;&gt;大文件上传&lt;/h1&gt;</span><br><span class="line">    &lt;input</span><br><span class="line">      ref=&quot;inputRef&quot;</span><br><span class="line">      type=&quot;file&quot;</span><br><span class="line">      class=&quot;file-input file-input-bordered file-input-warning w-full max-w-xs&quot;</span><br><span class="line">    /&gt;</span><br><span class="line">    &lt;button class=&quot;btn gap-2&quot; @click=&quot;uploadSingleFile&quot;&gt;上传&lt;/button&gt;</span><br><span class="line">    &lt;a :href=&quot;url&quot;&gt;&#123;&#123; url &#125;&#125;&lt;/a&gt;</span><br><span class="line">    &lt;div class=&quot;flex w-64 gap-2 flex-wrap&quot;&gt;</span><br><span class="line">      &lt;div</span><br><span class="line">        v-for=&quot;item in tasks&quot;</span><br><span class="line">        :key=&quot;item&quot;</span><br><span class="line">        class=&quot;flex-shrink-0 w-4 h-4 bg-gray-200&quot;</span><br><span class="line">        :class=&quot;&#123; &#x27;bg-green-500&#x27;: item.isComplete &#125;&quot;</span><br><span class="line">      &gt;&lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/main&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">hash</span>(<span class="params">buffer: <span class="built_in">ArrayBuffer</span></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> hash = <span class="keyword">await</span> crypto.<span class="property">subtle</span>.<span class="title function_">digest</span>(<span class="string">&#x27;SHA-256&#x27;</span>, buffer)</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Array</span>.<span class="title function_">from</span>(<span class="keyword">new</span> <span class="title class_">Uint8Array</span>(hash))</span><br><span class="line">    .<span class="title function_">map</span>(<span class="function">(<span class="params">b</span>) =&gt;</span> b.<span class="title function_">toString</span>(<span class="number">16</span>).<span class="title function_">padStart</span>(<span class="number">2</span>, <span class="string">&#x27;0&#x27;</span>))</span><br><span class="line">    .<span class="title function_">join</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次实践，只是对分片上传做了简单的实现，比较重点的只有一个 Blob 的 slice 方法。</p>
+<p>后续可以再去了解一下常见的信息摘要算法和去实现一下自己的异步池。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" data-id="clhd0085c000obqok8gac3fto" data-title="实践一个大文件上传" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/go/" rel="tag">go</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Älter</strong>
+      <div class="article-nav-title">震惊，这段代码居然有 4 种执行结果</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/CSS/" rel="tag">CSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Flutter/" rel="tag">Flutter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Node-js/" rel="tag">Node.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-Native/" rel="tag">React Native</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/React-js/" rel="tag">React.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Swift/" rel="tag">Swift</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Typescript/" rel="tag">Typescript</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/Vue-js/" rel="tag">Vue.js</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/gin/" rel="tag">gin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/go/" rel="tag">go</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/iOS/" rel="tag">iOS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/swagger/" rel="tag">swagger</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" rel="tag">位运算</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" rel="tag">微信小程序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E6%8E%92%E5%BA%8F/" rel="tag">排序</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag">算法</a></li><li class="tag-list-item"><a class="tag-list-link" href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" rel="tag">计算机</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 20px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/React-js/" style="font-size: 10px;">React.js</a> <a href="/blog/tags/Swift/" style="font-size: 16.67px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/Vue-js/" style="font-size: 10px;">Vue.js</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 13.33px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 16.67px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archiv</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2023/05/">五月 2023</a></li><li class="archive-list-item"><a class="archive-list-link" href="/blog/archives/2023/04/">四月 2023</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">letzter Beitrag</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">实践一个大文件上传</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/">震惊，这段代码居然有 4 种执行结果</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2023/05/04/%E4%BB%BF%E4%B8%80%E4%B8%AA-AppStore-%E6%95%88%E6%9E%9C/">仿一个 AppStore 效果</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/">React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次</a>
+          </li>
+        
+          <li>
+            <a href="/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/">null 和 undefined 的区别：看看祖师爷是怎么说的</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      
+      &copy; 2023 芯芯爸爸<br>
+      Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/blog/" class="mobile-nav-link">Home</a>
+  
+    <a href="/blog/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+
+<script src="/blog/js/jquery-3.4.1.min.js"></script>
+
+
+
+  
+<script src="/blog/fancybox/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/blog/js/script.js"></script>
+
+
+
+
+
+  </div>
+</body>
+</html>

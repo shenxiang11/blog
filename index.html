@@ -71,6 +71,72 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-大文件上传" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
+  <div class="article-meta">
+    <a href="/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" class="article-date">
+  <time class="dt-published" datetime="2023-05-07T12:56:17.000Z" itemprop="datePublished">2023-05-07</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="p-name article-title" href="/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">实践一个大文件上传</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="e-content article-entry" itemprop="articleBody">
+      
+        <h2 id="提前看最终效果"><a href="#提前看最终效果" class="headerlink" title="提前看最终效果"></a>提前看最终效果</h2><p><img src="/blog/resources/2023-05/03.gif"></p>
+<h2 id="功能要点"><a href="#功能要点" class="headerlink" title="功能要点"></a>功能要点</h2><p>前端：</p>
+<ul>
+<li>大文件面临两个问题，首先就是用户体验如果上传一半时，有网络问题或其他原因中断，需要从头开始上传，体验不好；一般服务的网关或者程序都会限制一次请求的大小，超过大小的文件无法上传。</li>
+<li>所以可以通过文件分片解决上传大小问题；利用信息摘要算法避免重传。</li>
+<li>通过 <code>input type=&quot;file&quot;</code> 接收用户选择的文件。</li>
+<li>点击上传时，将完整文件首先做一次信息摘要算法，我使用的是 SHA-256。信息摘要的意思是无论输入的消息有多长，计算出来的消息摘要的长度总是固定的。这样我们在上传前，可以先做一次校验，判断之前是否已经上传过了，上传过了的文件可以打到“秒传”的效果，但是这次我没有做这个，其实做起来也容易，我这次计算这个值的目的是以这个值作为存放分片的目录名，方便后续操作分片。</li>
+<li>利用 Blob 支持的 slice 方法，可以将用户的文件分片，具体分割的大小可以根据网络和文件大小综合决定，由于只是一个演示，我使用了一个固定值。</li>
+<li>每一个分片可以额外计算一次信息摘要，每次上传分片前，也可以事先和服务端确认该分片之前是否上传过。每个分片传行地上传效率太低，全部一次上传可能对于服务器压力过大，我们可以使用异步任务池的概念控制并发数，这也是一个常见的考点，这次暂且使用第三方库 tiny-async-pool 快速把这个示例完成。</li>
+</ul>
+<p>服务端：</p>
+<ul>
+<li>实现静态文件服务，需要将用户上传的文件，以服务形式提供出来，方便验证上传的文件。</li>
+<li>实现验证分片是否上传的接口，在后端每个分片以 tmp&#x2F;[文件hash]&#x2F;[分片序号]-[分片hash] 的形式存在，我们可以比较容易得到分片是否存在。</li>
+<li>实现上传分片接口，这个接口只需要按照规则，写文件即可。</li>
+<li>实现合并接口，由于前端分片后是并发上传，我们无法保证切片到达的顺序，所以需要等全部分片上传完成后，客户端通知后端进行合并。合并后可以由后端以同样的摘要算法计算一次，可以判断最后合并的文件是不是上传的同一个文件。</li>
+</ul>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;crypto/sha256&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/gin-contrib/cors&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/gin-gonic/gin&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line">	<span class="string">&quot;sort&quot;</span></span><br><span class="line">	<span class="string">&quot;strconv&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	router := gin.Default()</span><br><span class="line"></span><br><span class="line">	router.Use(cors.Default())</span><br><span class="line"></span><br><span class="line">	router.Static(<span class="string">&quot;/tmp&quot;</span>, <span class="string">&quot;./tmp&quot;</span>)</span><br><span class="line"></span><br><span class="line">	router.POST(<span class="string">&quot;/verify&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		index := c.PostForm(<span class="string">&quot;index&quot;</span>)</span><br><span class="line">		fileHash := c.PostForm(<span class="string">&quot;fileHash&quot;</span>)</span><br><span class="line">		sliceHash := c.PostForm(<span class="string">&quot;sliceHash&quot;</span>)</span><br><span class="line"></span><br><span class="line">		exist := isFileExist(fmt.Sprintf(<span class="string">&quot;tmp/%s/%s-%s&quot;</span>, fileHash, index, sliceHash))</span><br><span class="line"></span><br><span class="line">		c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">			<span class="string">&quot;exist&quot;</span>: exist,</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	router.POST(<span class="string">&quot;/upload&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		index := c.PostForm(<span class="string">&quot;index&quot;</span>)</span><br><span class="line">		fileHash := c.PostForm(<span class="string">&quot;fileHash&quot;</span>)</span><br><span class="line">		sliceHash := c.PostForm(<span class="string">&quot;sliceHash&quot;</span>)</span><br><span class="line">		file, err := c.FormFile(<span class="string">&quot;file&quot;</span>)</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		fullPath := fmt.Sprintf(<span class="string">&quot;tmp/%s/%s-%s&quot;</span>, fileHash, index, sliceHash)</span><br><span class="line"></span><br><span class="line">		err = c.SaveUploadedFile(file, fullPath)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		c.JSON(http.StatusOK, gin.H&#123;&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	router.POST(<span class="string">&quot;/merge&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c *gin.Context)</span></span> &#123;</span><br><span class="line">		fileHash := c.PostForm(<span class="string">&quot;fileHash&quot;</span>)</span><br><span class="line">		dirname := fmt.Sprintf(<span class="string">&quot;tmp/%s&quot;</span>, fileHash)</span><br><span class="line">		dir, err := os.ReadDir(dirname)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		sort.SliceStable(dir, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="type">int</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">			x := strings.Split(dir[i].Name(), <span class="string">&quot;-&quot;</span>)</span><br><span class="line">			y := strings.Split(dir[j].Name(), <span class="string">&quot;-&quot;</span>)</span><br><span class="line"></span><br><span class="line">			nx, _ := strconv.Atoi(x[<span class="number">0</span>])</span><br><span class="line">			ny, _ := strconv.Atoi(y[<span class="number">0</span>])</span><br><span class="line">			<span class="keyword">return</span> nx &lt; ny</span><br><span class="line">		&#125;)</span><br><span class="line"></span><br><span class="line">		all := []<span class="type">byte</span>&#123;&#125;</span><br><span class="line">		<span class="keyword">for</span> _, file := <span class="keyword">range</span> dir &#123;</span><br><span class="line">			data, err := os.ReadFile(fmt.Sprintf(<span class="string">&quot;tmp/%s/%s&quot;</span>, fileHash, file.Name()))</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">					<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">				&#125;)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">			all = <span class="built_in">append</span>(all, data...)</span><br><span class="line">		&#125;</span><br><span class="line">		target := fmt.Sprintf(<span class="string">&quot;tmp/%s.mp4&quot;</span>, fileHash)</span><br><span class="line">		err = os.WriteFile(target, all, <span class="number">0666</span>)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: err.Error(),</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		h := sha256.New()</span><br><span class="line">		h.Write(all)</span><br><span class="line"></span><br><span class="line">		bs := h.Sum(<span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">		hash := fmt.Sprintf(<span class="string">&quot;%x&quot;</span>, bs)</span><br><span class="line">		<span class="keyword">if</span> hash == fileHash &#123;</span><br><span class="line">			err := os.RemoveAll(dirname)</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">					<span class="string">&quot;message&quot;</span>: <span class="string">&quot;目录删除失败&quot;</span>,</span><br><span class="line">				&#125;)</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">			c.JSON(http.StatusOK, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: <span class="string">&quot;大成功&quot;</span>,</span><br><span class="line">				<span class="string">&quot;url&quot;</span>:     <span class="string">&quot;http://127.0.0.1:8080/&quot;</span> + target,</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			c.JSON(http.StatusBadRequest, gin.H&#123;</span><br><span class="line">				<span class="string">&quot;message&quot;</span>: <span class="string">&quot;hash 不一致&quot;</span>,</span><br><span class="line">			&#125;)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br><span class="line"></span><br><span class="line">	err := router.Run(<span class="string">&quot;:8080&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="built_in">println</span>(err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">isFileExist</span><span class="params">(fileName <span class="type">string</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">	_, err := os.Stat(fileName)</span><br><span class="line">	<span class="keyword">return</span> err == <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br></pre></td><td class="code"><pre><span class="line">&lt;script setup lang=&quot;ts&quot;&gt;</span><br><span class="line">import asyncPool from &#x27;tiny-async-pool&#x27;</span><br><span class="line">import &#123; hash &#125; from &#x27;@/utils&#x27;</span><br><span class="line">import &#123; reactive, ref &#125; from &#x27;vue&#x27;</span><br><span class="line"></span><br><span class="line">const CHUNK_SIZE = 1024 * 512</span><br><span class="line"></span><br><span class="line">type Task = &#123;</span><br><span class="line">  index: number</span><br><span class="line">  blob: Blob</span><br><span class="line">  name: string</span><br><span class="line">  fileHash: string</span><br><span class="line">  sliceHash: string</span><br><span class="line">  isComplete: boolean</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const inputRef = ref&lt;HTMLInputElement | null&gt;(null)</span><br><span class="line">const tasks = reactive&lt;Task[]&gt;([])</span><br><span class="line">const url = ref(&#x27;&#x27;)</span><br><span class="line"></span><br><span class="line">async function uploadSingleFile() &#123;</span><br><span class="line">  let uploadedSize = 0</span><br><span class="line">  const file = inputRef?.value?.files?.[0]</span><br><span class="line">  if (!file) &#123;</span><br><span class="line">    return</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const fullHash = await hash(await file.arrayBuffer())</span><br><span class="line"></span><br><span class="line">  let index = 0</span><br><span class="line">  while (uploadedSize &lt; file.size) &#123;</span><br><span class="line">    index++</span><br><span class="line">    const fileChunk = file.slice(uploadedSize, uploadedSize + CHUNK_SIZE)</span><br><span class="line">    const sliceHash = await hash(await fileChunk.arrayBuffer())</span><br><span class="line"></span><br><span class="line">    tasks.push(&#123;</span><br><span class="line">      index,</span><br><span class="line">      blob: fileChunk,</span><br><span class="line">      fileHash: fullHash,</span><br><span class="line">      sliceHash: sliceHash,</span><br><span class="line">      name: file.name,</span><br><span class="line">      isComplete: false</span><br><span class="line">    &#125;)</span><br><span class="line">    uploadedSize += fileChunk.size</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  for await (const result of asyncPool(5, tasks, doTask)) &#123;</span><br><span class="line">    console.log(result)</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  const formData = new FormData()</span><br><span class="line">  formData.append(&#x27;fileHash&#x27;, fullHash)</span><br><span class="line">  const response = await fetch(&#x27;http://127.0.0.1:8080/merge&#x27;, &#123;</span><br><span class="line">    method: &#x27;POST&#x27;,</span><br><span class="line">    body: formData</span><br><span class="line">  &#125;)</span><br><span class="line">  const json = await response.json()</span><br><span class="line">  url.value = json.url</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function doTask(task: Task) &#123;</span><br><span class="line">  return new Promise(async (resolve, reject) =&gt; &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">      const formData = new FormData()</span><br><span class="line">      formData.append(&#x27;index&#x27;, task.index.toString())</span><br><span class="line">      formData.append(&#x27;name&#x27;, task.name)</span><br><span class="line">      formData.append(&#x27;fileHash&#x27;, task.fileHash)</span><br><span class="line">      formData.append(&#x27;sliceHash&#x27;, task.sliceHash)</span><br><span class="line"></span><br><span class="line">      const verifyResponse = await fetch(&#x27;http://127.0.0.1:8080/verify&#x27;, &#123;</span><br><span class="line">        method: &#x27;POST&#x27;,</span><br><span class="line">        body: formData</span><br><span class="line">      &#125;)</span><br><span class="line">      let message = await verifyResponse.json()</span><br><span class="line">      if (message.exist) &#123;</span><br><span class="line">        // 已上传</span><br><span class="line">        task.isComplete = true</span><br><span class="line">        resolve(&#x27;已上传，跳过这个 blob&#x27;)</span><br><span class="line">        return</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      // 未上传</span><br><span class="line">      formData.append(&#x27;file&#x27;, task.blob)</span><br><span class="line">      const response = await fetch(&#x27;http://127.0.0.1:8080/upload&#x27;, &#123;</span><br><span class="line">        method: &#x27;POST&#x27;,</span><br><span class="line">        body: formData</span><br><span class="line">      &#125;)</span><br><span class="line">      message = await response.json()</span><br><span class="line">      task.isComplete = true</span><br><span class="line">      resolve(message)</span><br><span class="line">    &#125; catch (error) &#123;</span><br><span class="line">      reject(error)</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;)</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;main class=&quot;flex flex-col items-center gap-4&quot;&gt;</span><br><span class="line">    &lt;h1 class=&quot;text-3xl font-bold pt-4&quot;&gt;大文件上传&lt;/h1&gt;</span><br><span class="line">    &lt;input</span><br><span class="line">      ref=&quot;inputRef&quot;</span><br><span class="line">      type=&quot;file&quot;</span><br><span class="line">      class=&quot;file-input file-input-bordered file-input-warning w-full max-w-xs&quot;</span><br><span class="line">    /&gt;</span><br><span class="line">    &lt;button class=&quot;btn gap-2&quot; @click=&quot;uploadSingleFile&quot;&gt;上传&lt;/button&gt;</span><br><span class="line">    &lt;a :href=&quot;url&quot;&gt;&#123;&#123; url &#125;&#125;&lt;/a&gt;</span><br><span class="line">    &lt;div class=&quot;flex w-64 gap-2 flex-wrap&quot;&gt;</span><br><span class="line">      &lt;div</span><br><span class="line">        v-for=&quot;item in tasks&quot;</span><br><span class="line">        :key=&quot;item&quot;</span><br><span class="line">        class=&quot;flex-shrink-0 w-4 h-4 bg-gray-200&quot;</span><br><span class="line">        :class=&quot;&#123; &#x27;bg-green-500&#x27;: item.isComplete &#125;&quot;</span><br><span class="line">      &gt;&lt;/div&gt;</span><br><span class="line">    &lt;/div&gt;</span><br><span class="line">  &lt;/main&gt;</span><br><span class="line">&lt;/template&gt;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">export</span> <span class="keyword">async</span> <span class="keyword">function</span> <span class="title function_">hash</span>(<span class="params">buffer: <span class="built_in">ArrayBuffer</span></span>) &#123;</span><br><span class="line">  <span class="keyword">const</span> hash = <span class="keyword">await</span> crypto.<span class="property">subtle</span>.<span class="title function_">digest</span>(<span class="string">&#x27;SHA-256&#x27;</span>, buffer)</span><br><span class="line">  <span class="keyword">return</span> <span class="title class_">Array</span>.<span class="title function_">from</span>(<span class="keyword">new</span> <span class="title class_">Uint8Array</span>(hash))</span><br><span class="line">    .<span class="title function_">map</span>(<span class="function">(<span class="params">b</span>) =&gt;</span> b.<span class="title function_">toString</span>(<span class="number">16</span>).<span class="title function_">padStart</span>(<span class="number">2</span>, <span class="string">&#x27;0&#x27;</span>))</span><br><span class="line">    .<span class="title function_">join</span>(<span class="string">&#x27;&#x27;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这次实践，只是对分片上传做了简单的实现，比较重点的只有一个 Blob 的 slice 方法。</p>
+<p>后续可以再去了解一下常见的信息摘要算法和去实现一下自己的异步池。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" data-id="clhd0085c000obqok8gac3fto" data-title="实践一个大文件上传" class="article-share-link">Teilen</a>
+      
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/go/" rel="tag">go</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+  
     <article id="post-震惊，这段代码居然后有 4  种执行结果" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
   <div class="article-meta">
     <a href="/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/" class="article-date">
@@ -106,7 +172,7 @@
 <li>不应该在一个条件里，使用 function 去声明函数（应该使用函数表达式）</li>
 </ul>
 <p>关于这里的第三点，我们可以从 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/function#%E6%9C%89%E6%9D%A1%E4%BB%B6%E7%9A%84%E5%88%9B%E5%BB%BA%E5%87%BD%E6%95%B0">MDN</a> 上找到说法: “这种声明方式在不同的浏览器里可能有不同的效果”。</p>
-<p>我们也就可以稍稍理解为什噩梦 chrome 和 safari 的不同结果了。</p>
+<p>我们也就可以稍稍理解为什么 chrome 和 safari 的不同结果了。</p>
 <h2 id="调试技巧"><a href="#调试技巧" class="headerlink" title="调试技巧"></a>调试技巧</h2><p>其实我如果我们真的想弄明白执行结果，可以采用单步执行查看调用时产生的作用域变量就可以。</p>
 <p>针对有编译环境的代码，我们可以直接查看其编译结果，这个相对容易，我们先说这一点。</p>
 <h2 id="编译环境：输出-2-和-function"><a href="#编译环境：输出-2-和-function" class="headerlink" title="编译环境：输出 2 和 function"></a>编译环境：输出 2 和 function</h2><p>我使用的环境是 vite，只引入了我们题目的代码，编译结果如下：</p>
@@ -121,7 +187,7 @@
 <p>后续两次打印是 a 都是 2。</p>
 <h2 id="chrome-非严格模式"><a href="#chrome-非严格模式" class="headerlink" title="chrome 非严格模式"></a>chrome 非严格模式</h2><p>我们把同样的代码粘贴到 chrome 控制台运行。</p>
 <p>刚进入 if 时，global 下的 a 是 0，block 下的 a 是 function。</p>
-<p>执行到第一次输出时，global 下的 a 是 1，block 下的 a 是 2。这里不知道什么时候全局下的 a 变成 1 的，深究下去也没有意义，这也正式不符合我们直觉的地方。</p>
+<p>执行到第一次输出时，global 下的 a 是 1，block 下的 a 是 2。这里不知道什么时候全局下的 a 变成 1 的，深究下去也没有意义，这也正是不符合我们直觉的地方。</p>
 <p>所以最后的输出是 2 和 1。</p>
 <h2 id="chrome-严格模式-safari-同样的执行结果，只看一下-chrome"><a href="#chrome-严格模式-safari-同样的执行结果，只看一下-chrome" class="headerlink" title="chrome 严格模式 (safari 同样的执行结果，只看一下 chrome)"></a>chrome 严格模式 (safari 同样的执行结果，只看一下 chrome)</h2><p>同样的代码，我们只加上严格模式：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&#x27;use strict&#x27;</span>;</span><br><span class="line"><span class="keyword">debugger</span>;</span><br><span class="line"><span class="keyword">var</span> a = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="literal">true</span>) &#123;</span><br><span class="line">    a = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">a</span>(<span class="params"></span>) &#123;<span class="keyword">return</span> <span class="number">3</span>&#125;</span><br><span class="line">    a = <span class="number">2</span>;</span><br><span class="line">    <span class="variable language_">console</span>.<span class="title function_">log</span>(a);</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable language_">console</span>.<span class="title function_">log</span>(a);</span><br></pre></td></tr></table></figure>
@@ -134,7 +200,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/" data-id="clha4o5v30015g9p02zmuhbow" data-title="震惊，这段代码居然有 4 种执行结果" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/" data-id="clhd0085i000xbqok4fcchytx" data-title="震惊，这段代码居然有 4 种执行结果" class="article-share-link">Teilen</a>
       
       
       
@@ -191,7 +257,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/04/%E4%BB%BF%E4%B8%80%E4%B8%AA-AppStore-%E6%95%88%E6%9E%9C/" data-id="clha4o5ut000sg9p00sir4zlp" data-title="仿一个 AppStore 效果" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/04/%E4%BB%BF%E4%B8%80%E4%B8%AA-AppStore-%E6%95%88%E6%9E%9C/" data-id="clhd00858000jbqok350achqq" data-title="仿一个 AppStore 效果" class="article-share-link">Teilen</a>
       
       
       
@@ -252,7 +318,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clha4o5um000kg9p0gz2w41kn" data-title="React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/03/React-Strict-Mode-%E7%9A%84%E4%BD%9C%E7%94%A8%EF%BC%9A%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81-Render-%E4%B8%A4%E6%AC%A1/" data-id="clhd00855000gbqoke03n633w" data-title="React Strict Mode 的作用：为什么我的 `useEffect` 执行了两次" class="article-share-link">Teilen</a>
       
       
       
@@ -326,7 +392,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clha4o5ur000qg9p08mc27r7g" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/" data-id="clhd00856000hbqok1scj3vlt" data-title="null 和 undefined 的区别：看看祖师爷是怎么说的" class="article-share-link">Teilen</a>
       
       
       
@@ -376,7 +442,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clha4o5uv000xg9p002c3f7z2" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/" data-id="clhd00859000lbqok4gyi6l9r" data-title="在 gin 项目中使用 swagger" class="article-share-link">Teilen</a>
       
       
       
@@ -435,7 +501,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clha4o5ul000hg9p0a5c66d45" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Node-js-%E6%89%93%E9%80%9A%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F%E6%94%AF%E4%BB%98/" data-id="clhd0084z0009bqok7g7caq9s" data-title="Node.js 打通微信小程序支付" class="article-share-link">Teilen</a>
       
       
       
@@ -489,7 +555,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clha4o5uj000eg9p0g23rfm6y" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/23/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1%EF%BC%9AMethodChannel/" data-id="clhd0084v0005bqokf9emcoh6" data-title="Flutter 与 iOS 通信：MethodChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -553,7 +619,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clha4o5uc0004g9p0hrwvc90o" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" data-id="clhd0084u0004bqok2j6mais9" data-title="Flutter 与 iOS 通信: BasicMessageChannel" class="article-share-link">Teilen</a>
       
       
       
@@ -635,104 +701,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clha4o5v10011g9p02mfb2yug" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
+      <a data-url="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" data-id="clhd0085e000ubqokgybfa2n8" data-title="手写 min-vue-router" class="article-share-link">Teilen</a>
       
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Vue/" rel="tag">Vue</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Vue-router/" rel="tag">Vue-router</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-  
-    <article id="post-a-1-a-2-a-3-的几种下毒方法" class="h-entry article article-type-post" itemprop="blogPost" itemscope itemtype="https://schema.org/BlogPosting">
-  <div class="article-meta">
-    <a href="/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" class="article-date">
-  <time class="dt-published" datetime="2023-04-20T17:52:26.000Z" itemprop="datePublished">2023-04-20</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="p-name article-title" href="/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/">使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="e-content article-entry" itemprop="articleBody">
-      
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><img src="/blog/resources/2023-04/06.jpeg"></p>
-<p>这算得上是近些年的前端网红题了，曾经对这种网红题非常抵触，认为非常没有意义。</p>
-<p>看到了不少人有做分享，有各种各样的方案，有涉及到 JS 非常基础的知识点，也不得不感叹解题者的脑洞之大。</p>
-<p>但是，拿来做面试题为难没有看过的面试者，就非常非常不地道了。</p>
-<h2 id="鹤顶红"><a href="#鹤顶红" class="headerlink" title="鹤顶红"></a>鹤顶红</h2><p>鹤顶红是武侠剧中出现最多的毒药，真的是江湖出行必备的毒药。</p>
-<p>正常情况下，如果 <code>let a = 1;</code> 则，表达式的后半段必不成立。但是容易想到如果在每个阶段自增后，表达式是可能成立的。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = <span class="number">1</span>;</span><br><span class="line">a++ === <span class="number">1</span> &amp;&amp; a++ === <span class="number">2</span> &amp;&amp; a++ === <span class="number">3</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>可是这就属于把题改了，我们需要把自增的逻辑藏起来。由于 <code>a</code> 是基础类型，我们基本上不可能对其做什么改造了。</p>
-<p>但是我们如果把 <code>a</code> 定义到 <code>window</code> 上，再加上诸如 <code>Object.defineProperty</code> 的 api，是能够做到的。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> tmp = <span class="number">1</span>;</span><br><span class="line"><span class="title class_">Object</span>.<span class="title function_">defineProperty</span>(<span class="variable language_">window</span>, <span class="string">&#x27;a&#x27;</span>, &#123;</span><br><span class="line">    <span class="attr">get</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> tmp++;</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;)</span><br><span class="line">a === <span class="number">1</span> &amp;&amp; a === <span class="number">2</span> &amp;&amp; a === <span class="number">3</span>; <span class="comment">// true</span></span><br></pre></td></tr></table></figure>
-
-<p>由于 <code>defineProperty</code> 的限制，我们不能把 <code>1</code> 作为 <code>value</code>, 设置在属性描述符号内部，不得不外部定义一个变量。</p>
-<p><code>defineProperty</code> 在诸如 Vue2 的框架中，用的非常多，几乎是面试高频会被问到的，所以这种“毒药”是你行走前端江湖必备的。</p>
-<h2 id="曼陀罗"><a href="#曼陀罗" class="headerlink" title="曼陀罗"></a>曼陀罗</h2><p>曼陀罗这个名字颇具异域风情、《神雕侠侣》中杨过就是中了此毒。</p>
-<p>说到这里我是要将此题改为另一道类似的题目：使 <code>a == 1 &amp;&amp; a == 2 &amp;&amp; a == 3</code> 返回 <code>true</code>。</p>
-<p>将严格相等改为了普通的相等，因为通常代码规范中要求使用严格相等，导致 <code>==</code> 不常写，故将此命名为这个异域的名字。</p>
-<p>正因为是不严格相等，我们可以利用 JS 中的类型转换机制来下毒。</p>
-<p>这个机制是这样的：</p>
-<ul>
-<li>如果两个值类型相同，则之间进行比较，和全等是一样的。</li>
-<li>如果一个是 null，另一个是 undefined，则相等。</li>
-<li>如果一个是数值，另一个是字符串，把字符串转换为数值，再比较转换后的数值。</li>
-<li>如果一个是 true，把它转成 1，再比较。</li>
-<li>如果一个是 false，把它转成 0，再比较。</li>
-<li>如果一个是对象，另一个是数值或字符串，会将对象转换为原始值，再比较。用到的是 valueOf() 和 toString() 方法。</li>
-</ul>
-<p>我们可以利用最后一点解这个题：</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a = &#123;</span><br><span class="line">    <span class="attr">value</span>: <span class="number">1</span>,</span><br><span class="line">    <span class="attr">valueOf</span>: <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="variable language_">this</span>.<span class="property">value</span>++;</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br><span class="line">a == <span class="number">1</span> &amp;&amp; a == <span class="number">2</span> &amp;&amp; a == <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
-
-<p>先前提到的那种解法必然也可以解这道题，但是这个写法不能用于上一道题，因为全等不会触发类型转换。</p>
-<h2 id="十香软筋散"><a href="#十香软筋散" class="headerlink" title="十香软筋散"></a>十香软筋散</h2><p>此毒无色无香，药性一发作便全身筋骨酸软，数日后虽行动如常，内力半点发挥不出。毒药和解药表面无异，若中毒者再服毒药则气绝身亡。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> a‌ = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">const</span> a‍ = <span class="number">2</span>;</span><br><span class="line"><span class="keyword">const</span> a = <span class="number">3</span>;</span><br><span class="line">a‌ === <span class="number">1</span> &amp;&amp; a‍ === <span class="number">2</span> &amp;&amp; a === <span class="number">3</span></span><br></pre></td></tr></table></figure>
-
-<p>你可能会说：“这段代码应该是会报错的！”。但是相信我，你复制到控制台执行一下试试。注意我这里有一个 <code>a</code> 是正常的 <code>a</code>，如果你有执行过上面别的方法，注意先刷新一下窗口。</p>
-<p>是的 <code>const</code> 声明的是常量，理应抛出错误：<code>Identifier &#39;haha&#39; has already been declared</code>。</p>
-<p>实际上，我这里定义的三个 <code>a</code> 是不同的变量，有一个是 <code>a</code>, 一个是 <code>ax</code>, 一个是 <code>ay</code>，其中 x, y 是被我替换为 unicode 里不可见的字符，所以在上面的代码里看到的都是 <code>a</code> 的形式。</p>
-<p>我目前正在使用 webstorm 编辑这篇文章，我也发现了这些不可见字符会在编辑器里显示出来“怪怪的”，如果你也打开这篇 markdown，你会发现：</p>
-<p><img src="/blog/resources/2023-04/05.png"></p>
-<p>构造变量名称（唯一标识符）的通用规则是：</p>
-<ul>
-<li>名称可包含字母、数字、下划线和美元符号</li>
-<li>名称必须以字母开头</li>
-<li>名称也可以 $ 和 _ 开头</li>
-<li>名称对大小写敏感（y 和 Y 是不同的变量）</li>
-<li>保留字（比如 JavaScript 的关键词）无法用作变量名称</li>
-</ul>
-<p>实际上，使用中文，甚至是 emoji 表情作为变量名称都是合法的，所以这里可以使用不可见的 unicode 字符作为变量名。</p>
-<p>当然，如果想要运行正确，我们得偷偷的把题改了，使用我们新声明的变量，虽然它们看起来一摸一样。</p>
-<p>这种“下毒”，真是无色无味，正像软筋散一样。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>这边汇总了二个针对原题的解法：通过使用 <code>Object.defineProperty</code> 和利用变量名称的规则的方法；</p>
-<p>以及对它的变种题目：通过对象类型转化时默认调用 <code>valueOf</code> 函数的机制。</p>
-<p>这道题至少也算给我们带来了三个 JS 基础知识点，好了，你（这道题）可以毒发身亡了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="https://shenxiang11.github.io/blog/2023/04/20/a-1-a-2-a-3-%E7%9A%84%E5%87%A0%E7%A7%8D%E4%B8%8B%E6%AF%92%E6%96%B9%E6%B3%95/" data-id="clha4o5uo000ng9p05slth3yp" data-title="使 a === 1 &amp;&amp; a === 2 &amp;&amp; a === 3 为 true 的几种&#34;下毒&#34;方法" class="article-share-link">Teilen</a>
-      
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/blog/tags/Javascript/" rel="tag">Javascript</a></li></ul>
 
     </footer>
   </div>
@@ -770,7 +743,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 20px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/React-js/" style="font-size: 10px;">React.js</a> <a href="/blog/tags/Swift/" style="font-size: 16.67px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/Vue-js/" style="font-size: 10px;">Vue.js</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 10px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 16.67px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
+      <a href="/blog/tags/CSS/" style="font-size: 10px;">CSS</a> <a href="/blog/tags/Flutter/" style="font-size: 13.33px;">Flutter</a> <a href="/blog/tags/Javascript/" style="font-size: 20px;">Javascript</a> <a href="/blog/tags/Node-js/" style="font-size: 10px;">Node.js</a> <a href="/blog/tags/React-Native/" style="font-size: 13.33px;">React Native</a> <a href="/blog/tags/React-js/" style="font-size: 10px;">React.js</a> <a href="/blog/tags/Swift/" style="font-size: 16.67px;">Swift</a> <a href="/blog/tags/Typescript/" style="font-size: 10px;">Typescript</a> <a href="/blog/tags/Vue/" style="font-size: 10px;">Vue</a> <a href="/blog/tags/Vue-router/" style="font-size: 10px;">Vue-router</a> <a href="/blog/tags/Vue-js/" style="font-size: 10px;">Vue.js</a> <a href="/blog/tags/gin/" style="font-size: 10px;">gin</a> <a href="/blog/tags/go/" style="font-size: 13.33px;">go</a> <a href="/blog/tags/iOS/" style="font-size: 16.67px;">iOS</a> <a href="/blog/tags/swagger/" style="font-size: 10px;">swagger</a> <a href="/blog/tags/%E4%BD%8D%E8%BF%90%E7%AE%97/" style="font-size: 10px;">位运算</a> <a href="/blog/tags/%E5%BE%AE%E4%BF%A1%E5%B0%8F%E7%A8%8B%E5%BA%8F/" style="font-size: 10px;">微信小程序</a> <a href="/blog/tags/%E6%8E%92%E5%BA%8F/" style="font-size: 10px;">排序</a> <a href="/blog/tags/%E7%AE%97%E6%B3%95/" style="font-size: 13.33px;">算法</a> <a href="/blog/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA/" style="font-size: 10px;">计算机</a>
     </div>
   </div>
 
@@ -792,6 +765,10 @@
       <ul>
         
           <li>
+            <a href="/blog/2023/05/07/%E5%A4%A7%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/">实践一个大文件上传</a>
+          </li>
+        
+          <li>
             <a href="/blog/2023/05/05/%E9%9C%87%E6%83%8A%EF%BC%8C%E8%BF%99%E6%AE%B5%E4%BB%A3%E7%A0%81%E5%B1%85%E7%84%B6%E5%90%8E%E6%9C%89%204%20%20%E7%A7%8D%E6%89%A7%E8%A1%8C%E7%BB%93%E6%9E%9C/">震惊，这段代码居然有 4 种执行结果</a>
           </li>
         
@@ -805,10 +782,6 @@
         
           <li>
             <a href="/blog/2023/05/02/null-%E5%92%8C-undefined-%E7%9A%84%E5%8C%BA%E5%88%AB%EF%BC%9A%E7%9C%8B%E7%9C%8B%E7%A5%96%E5%B8%88%E7%88%B7%E6%98%AF%E6%80%8E%E4%B9%88%E8%AF%B4%E7%9A%84/">null 和 undefined 的区别：看看祖师爷是怎么说的</a>
-          </li>
-        
-          <li>
-            <a href="/blog/2023/04/25/%E5%9C%A8-gin-%E9%A1%B9%E7%9B%AE%E4%B8%AD%E4%BD%BF%E7%94%A8-swagger/">在 gin 项目中使用 swagger</a>
           </li>
         
       </ul>
