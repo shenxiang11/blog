@@ -1,7 +1,7 @@
 ---
 title: 在 gin 项目中使用 swagger
 date: 2023-04-25 09:57:23
-tags: [go, gin, swagger]
+tags: [go, gin]
 ---
 
 ## 前言
