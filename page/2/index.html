@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">19</span>
+          <span class="site-state-item-count">20</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -134,6 +134,123 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://shenxiang11.github.io/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="芯芯爸爸">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端芯事">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 前端芯事">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2023/04/21/%E6%89%8B%E5%86%99-min-vue-router/" class="post-title-link" itemprop="url">手写 min-vue-router</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-21 10:49:23" itemprop="dateCreated datePublished" datetime="2023-04-21T10:49:23+00:00">2023-04-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>Vue-router 是 Vue 的官方路由，是金典的路由插件，本次挑战的是就是将官方路由模板改成使用自己编写一个简易的路由功能。</p>
+<h2 id="通过-create-vue-创建项目"><a href="#通过-create-vue-创建项目" class="headerlink" title="通过 create-vue 创建项目"></a>通过 create-vue 创建项目</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pnpm create vue@3</span><br></pre></td></tr></table></figure>
+
+<p>这是一个在命令行中交互的方式创建 vue 项目的方式，我们只需要选择 vue-router 即可，其他 typescript、pinia 之类的我们都不需要，项目跑起来以后，我们都会把 vue-router 替换掉。</p>
+<p><img src="/blog/resources/2023-04/07.png"></p>
+<p>初始项目，基本上就是左边两个链接，和右边显示路由相应的页面。</p>
+<h2 id="将-vue-router-替换为-my-router"><a href="#将-vue-router-替换为-my-router" class="headerlink" title="将 vue-router 替换为 my-router"></a>将 vue-router 替换为 my-router</h2><p>下面是模版项目的代码，我只对 <code>import &#123; createRouter &#125; from &#39;vue-router&#39;</code> 改成了 <code>import &#123; createRouter &#125; from &#39;../my-router&#39;</code>，以及注释了 history 那一行。</p>
+<p>在我的版本中，这次就只实现一下 history 模式的路由，所以不需要接收路由模式。</p>
+<p>可以看到，现在和原本应用有关系的地方是 <code>createRouter</code> 方法。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createRouter &#125; <span class="keyword">from</span> <span class="string">&#x27;../my-router&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">HomeView</span> <span class="keyword">from</span> <span class="string">&#x27;../views/HomeView.vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> router = <span class="title function_">createRouter</span>(&#123;</span><br><span class="line">  <span class="comment">// history: createWebHistory(import.meta.env.BASE_URL),</span></span><br><span class="line">  <span class="attr">routes</span>: [</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;/&#x27;</span>,</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&#x27;home&#x27;</span>,</span><br><span class="line">      <span class="attr">component</span>: <span class="title class_">HomeView</span></span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="attr">path</span>: <span class="string">&#x27;/about&#x27;</span>,</span><br><span class="line">      <span class="attr">name</span>: <span class="string">&#x27;about&#x27;</span>,</span><br><span class="line">      <span class="comment">// route level code-splitting</span></span><br><span class="line">      <span class="comment">// this generates a separate chunk (About.[hash].js) for this route</span></span><br><span class="line">      <span class="comment">// which is lazy-loaded when the route is visited.</span></span><br><span class="line">      <span class="attr">component</span>: <span class="function">() =&gt;</span> <span class="keyword">import</span>(<span class="string">&#x27;../views/AboutView.vue&#x27;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">  ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> router</span><br></pre></td></tr></table></figure>
+
+<p>而 <code>createRouter</code> 创建出来的实例又被 <code>app.use(router)</code> 的形式使用。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; createApp &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> <span class="title class_">App</span> <span class="keyword">from</span> <span class="string">&#x27;./App.vue&#x27;</span></span><br><span class="line"><span class="keyword">import</span> router <span class="keyword">from</span> <span class="string">&#x27;./router&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&#x27;./assets/main.css&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> app = <span class="title function_">createApp</span>(<span class="title class_">App</span>)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">use</span>(router)</span><br><span class="line"></span><br><span class="line">app.<span class="title function_">mount</span>(<span class="string">&#x27;#app&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="简单了解-app-use"><a href="#简单了解-app-use" class="headerlink" title="简单了解 app.use"></a>简单了解 app.use</h2><p>我说再多都不如官网的介绍: <a target="_blank" rel="noopener" href="https://cn.vuejs.org/guide/reusability/plugins.html#introduction">跳转官网</a>。</p>
+<p>简单总结就是，我们的 <code>router</code> 对象上需要一个 <code>install</code> 方法，调用 <code>use</code> 的 <code>app</code> 会作为第一个参数传给我们。</p>
+<p>用过 vue-router 都会比较清楚，它提供了两个内置组件，<code>RouterLink</code> 和 <code>RouterView</code>，我们就可以在这个时候去注册这两个组件。</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="title class_">RouterLink</span> <span class="keyword">from</span> <span class="string">&quot;./RouterLink&quot;</span>;</span><br><span class="line"><span class="keyword">import</span> <span class="title class_">RouterView</span> <span class="keyword">from</span> <span class="string">&#x27;./RouterView&#x27;</span>;</span><br><span class="line"><span class="keyword">import</span> &#123;ref&#125; <span class="keyword">from</span> <span class="string">&quot;vue&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">function</span> <span class="title function_">createRouter</span>(<span class="params">options</span>) &#123;</span><br><span class="line">    <span class="keyword">const</span> router = &#123;</span><br><span class="line">        <span class="attr">routes</span>: options.<span class="property">routes</span>,</span><br><span class="line">        <span class="attr">current</span>: <span class="title function_">ref</span>(location.<span class="property">path</span> || <span class="string">&#x27;/&#x27;</span>),</span><br><span class="line">        <span class="title function_">install</span>(<span class="params">app, a</span>) &#123;</span><br><span class="line">            <span class="keyword">const</span> router = <span class="variable language_">this</span>;</span><br><span class="line"></span><br><span class="line">            app</span><br><span class="line">                .<span class="title function_">component</span>(<span class="string">&#x27;RouterLink&#x27;</span>, <span class="title class_">RouterLink</span>)</span><br><span class="line">                .<span class="title function_">component</span>(<span class="string">&#x27;RouterView&#x27;</span>, <span class="title class_">RouterView</span>);</span><br><span class="line"></span><br><span class="line">            app.<span class="property">config</span>.<span class="property">globalProperties</span>.<span class="property">$router</span> = router;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="variable language_">window</span>.<span class="title function_">addEventListener</span>(<span class="string">&#x27;popstate&#x27;</span>, <span class="keyword">function</span> (<span class="params">event</span>) &#123;</span><br><span class="line">        router.<span class="property">current</span>.<span class="property">value</span> = event.<span class="property">state</span>.<span class="property">to</span>;</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> router;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>因为前面说我们实现的是 history 的模式，所以这里额外有一个对 <code>popstate</code> 的监听，这是对浏览器后退的监听，我们将跳转的路径绑定到 <code>router</code> 的 <code>current</code> 属性上。</p>
+<p>额外提一句，如果是实现 hash 模式，在这里监听 <code>hashChange</code> 就可以，不需要在 <code>RouterLink</code> 中监听点击，会更容易实现。</p>
+<p>注意这里使用了 <code>ref</code>，我希望它是响应式的，这会在 <code>router-view</code> 中用到。</p>
+<p>同时，我将业务注册的 <code>routes</code>，即 <code>Home</code> 和 <code>About</code>，直接放到了 <code>router</code> 上，后面也会在 <code>router-view</code> 中用到。</p>
+<p>最后，router 自身也通过 <code>app.config.globalProperties.$router</code> 的形式放到了 app 上，我们使用 <code>current</code> 的时候需要从这里取出。</p>
+<h2 id="编写-RouterLink-代码"><a href="#编写-RouterLink-代码" class="headerlink" title="编写 RouterLink 代码"></a>编写 RouterLink 代码</h2><p>一开始，我们只需要返回一个显示任意内容的组件即可，随后去页面上查看是否能够显示。</p>
+<p>RouterLink 会有一个 <code>to</code> 参数，代表需要跳转的目标路径。还有一个 slot，一般是一段文字。</p>
+<p>所以我们利用 <code>h</code> 函数来渲染这个组件，使用 <code>slots.default()</code> 来渲染插槽。具体代码如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; defineComponent, getCurrentInstance, h &#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineComponent</span>(&#123;</span><br><span class="line">    <span class="attr">props</span>: &#123;</span><br><span class="line">        <span class="attr">to</span>: &#123;</span><br><span class="line">            <span class="attr">type</span>: <span class="title class_">String</span>,</span><br><span class="line">            <span class="attr">required</span>: <span class="literal">true</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;,</span><br><span class="line">    <span class="title function_">setup</span>(<span class="params">props, &#123; slots &#125;</span>) &#123;</span><br><span class="line">        <span class="keyword">const</span> app = <span class="title function_">getCurrentInstance</span>()</span><br><span class="line">        <span class="keyword">const</span> &#123; to &#125; = props</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="title function_">h</span>(</span><br><span class="line">                <span class="string">&#x27;a&#x27;</span>,</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="attr">href</span>: to,</span><br><span class="line">                    <span class="title function_">onClick</span>(<span class="params">e</span>) &#123;</span><br><span class="line">                        e.<span class="title function_">preventDefault</span>()</span><br><span class="line">                        <span class="keyword">const</span> data = &#123; to &#125;</span><br><span class="line">                        history.<span class="title function_">pushState</span>(data, <span class="string">&#x27;&#x27;</span>, to)</span><br><span class="line">                        app.<span class="property">proxy</span>.<span class="property">$router</span>.<span class="property">current</span>.<span class="property">value</span> = to</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;,</span><br><span class="line">                slots.<span class="title function_">default</span>()</span><br><span class="line">            )</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<p>跳转时，我们禁用默认行为，该用 <code>pushState</code> 跳转，<code>pushState</code> 的第一个参数，会在 <code>popState</code> 时获得，所以它也需要记录 <code>to</code> 这个参数。</p>
+<p>上一节提到的 <code>current</code>，我们以 <code>app.proxy.$router.current</code> 这个形式获得，在 <code>setup</code> 里可以这么获取，但是翻了官网没有看到这部分内容，后续可以再跟进一下。</p>
+<h2 id="编写-RouterView-代码"><a href="#编写-RouterView-代码" class="headerlink" title="编写 RouterView 代码"></a>编写 RouterView 代码</h2><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123;defineAsyncComponent, defineComponent, getCurrentInstance, h, unref&#125; <span class="keyword">from</span> <span class="string">&#x27;vue&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">export</span> <span class="keyword">default</span> <span class="title function_">defineComponent</span>(&#123;</span><br><span class="line">    <span class="title function_">setup</span>(<span class="params">props</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">            <span class="keyword">const</span> app = <span class="title function_">getCurrentInstance</span>();</span><br><span class="line">            <span class="keyword">const</span> routes = app.<span class="property">proxy</span>.<span class="property">$router</span>.<span class="property">routes</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">let</span> component;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">let</span> r <span class="keyword">of</span> routes) &#123;</span><br><span class="line">                <span class="keyword">if</span> (r.<span class="property">path</span> === <span class="title function_">unref</span>(app.<span class="property">proxy</span>.<span class="property">$router</span>.<span class="property">current</span>)) &#123;</span><br><span class="line">                    component = r.<span class="property">component</span>;</span><br><span class="line">                    <span class="keyword">break</span>;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (component) &#123;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">typeof</span> component === <span class="string">&#x27;function&#x27;</span>) &#123;</span><br><span class="line">                    <span class="keyword">let</span> asyncComponent = <span class="title function_">defineAsyncComponent</span>(component);</span><br><span class="line">                    <span class="keyword">return</span> <span class="title function_">h</span>(asyncComponent, props);</span><br><span class="line">                &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                    <span class="keyword">return</span> <span class="title function_">h</span>(component, props);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="variable language_">console</span>.<span class="title function_">warn</span>(<span class="string">&#x27;no match route&#x27;</span>);</span><br><span class="line">                <span class="keyword">return</span> <span class="title function_">h</span>(<span class="string">&#x27;div&#x27;</span>);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p><code>RouterView</code> 的功能就是选择匹配的组件进行展示，如果我们得到了组件，直接传递给 <code>h</code> 函数就能渲染。</p>
+<p>特别地，<code>About</code> 在这里是一个异步组件，我们需要先调用 <code>defineAsyncComponent</code>。</p>
+<p>匹配的逻辑，在这里就是一个依据 <code>current</code> 简单的在数组中的查找，没有支持嵌套的逻辑。</p>
+<p>正应为 <code>current</code> 是响应式的，我们路由在切换时，我们也能够切换组件。</p>
+<p>一个小技巧是使用 <code>unref</code>，如果我们不确定对象是否是一个 <code>ref</code>，或者是不想写 <code>.value</code> 时可以使用。</p>
+<p>到这里，我们的这个应用又能够切换路由显示正确的组件了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过写一个简单的 vue-router，了解了其基本的原理，也学到了 vue 里不少基础的 api。</p>
+<p>vue 和 vue-router 里依旧还有很多优秀代码值得探索，比如嵌套路由，路由钩子，动态参数等，后续可以继续学习。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -179,7 +296,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 04:47:05" itemprop="dateModified" datetime="2023-05-08T04:47:05+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
     </span>
 
   
@@ -307,7 +424,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 04:47:05" itemprop="dateModified" datetime="2023-05-08T04:47:05+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
     </span>
 
   
@@ -408,7 +525,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 04:47:05" itemprop="dateModified" datetime="2023-05-08T04:47:05+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
     </span>
 
   
@@ -498,7 +615,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 04:47:05" itemprop="dateModified" datetime="2023-05-08T04:47:05+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
     </span>
 
   
@@ -593,7 +710,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 04:47:05" itemprop="dateModified" datetime="2023-05-08T04:47:05+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
     </span>
 
   
@@ -698,7 +815,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 04:47:05" itemprop="dateModified" datetime="2023-05-08T04:47:05+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
     </span>
 
   
@@ -784,7 +901,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 04:47:05" itemprop="dateModified" datetime="2023-05-08T04:47:05+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
     </span>
 
   
@@ -870,7 +987,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 04:47:05" itemprop="dateModified" datetime="2023-05-08T04:47:05+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
     </span>
 
   
@@ -967,7 +1084,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 04:47:05" itemprop="dateModified" datetime="2023-05-08T04:47:05+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
     </span>
 
   
