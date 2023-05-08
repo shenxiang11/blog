@@ -112,7 +112,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/blog/archives/">
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">21</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -134,6 +134,105 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://shenxiang11.github.io/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/blog/images/avatar.gif">
+      <meta itemprop="name" content="芯芯爸爸">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="前端芯事">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | 前端芯事">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/blog/2023/04/22/Flutter-%E4%B8%8E-iOS-%E9%80%9A%E4%BF%A1-BasicMessageChannel/" class="post-title-link" itemprop="url">Flutter 与 iOS 通信: BasicMessageChannel</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-22 12:05:00" itemprop="dateCreated datePublished" datetime="2023-04-22T12:05:00+00:00">2023-04-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><code>BasicMessageChannel</code> 是适合在 Flutter 和原生端，用于传递字符串和半结构化信息的通信方式。</p>
+<h2 id="Flutter-代码"><a href="#Flutter-代码" class="headerlink" title="Flutter 代码"></a>Flutter 代码</h2><p>为了方便，我们直接使用 Android Studio 创建 Flutter 工程，Swift 部分也使用工程创建出来的 iOS 目录即可。</p>
+<p>为了简单，我们的演示以传递字符串为例。</p>
+<p>下面的代码是基于官方计数器 DEMO 修改而来，删除了注释内容，补充了 <code>BasicMessageChannel</code> 部分代码，主要关注 <code>_MyHomePageState</code> 的 <code>initState</code> 内部的 <code>setMessageHandler</code> 和后面的 <code>_sendMessage</code> 方法。</p>
+<p>前者是处理原生端发送过来的消息，并且还可以回复一条消息给原生端。</p>
+<p>后者是向原生端发送消息，并且可以接收到原生端对于这一条消息的回复。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line">import &#x27;package:flutter/material.dart&#x27;;</span><br><span class="line">import &#x27;package:flutter/services.dart&#x27;;</span><br><span class="line"></span><br><span class="line">void main() &#123;</span><br><span class="line">  runApp(const MyApp());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class MyApp extends StatelessWidget &#123;</span><br><span class="line">  const MyApp(&#123;Key? key&#125;) : super(key: key);</span><br><span class="line"></span><br><span class="line">  @override</span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    return MaterialApp(</span><br><span class="line">      title: &#x27;Flutter Demo&#x27;,</span><br><span class="line">      theme: ThemeData(</span><br><span class="line">        primarySwatch: Colors.blue,</span><br><span class="line">      ),</span><br><span class="line">      home: const MyHomePage(title: &#x27;Flutter Demo Home Page&#x27;),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class MyHomePage extends StatefulWidget &#123;</span><br><span class="line">  const MyHomePage(&#123;Key? key, required this.title&#125;) : super(key: key);</span><br><span class="line">  </span><br><span class="line">  final String title;</span><br><span class="line"></span><br><span class="line">  @override</span><br><span class="line">  State&lt;MyHomePage&gt; createState() =&gt; _MyHomePageState();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class _MyHomePageState extends State&lt;MyHomePage&gt; &#123;</span><br><span class="line">  static const _channel = BasicMessageChannel(&quot;dev.basicMessageChannel&quot;, StringCodec());</span><br><span class="line"></span><br><span class="line">  @override</span><br><span class="line">  void initState() &#123;</span><br><span class="line">    super.initState();</span><br><span class="line"></span><br><span class="line">    _channel.setMessageHandler((message) async &#123;</span><br><span class="line">      print(&quot;1. flutter receive: $message&quot;);</span><br><span class="line">      return &quot;2. flutter reply receive&quot;;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  Future&lt;void&gt; _sendMessage() async &#123;</span><br><span class="line">    var message = await _channel.send(&quot;3. flutter send&quot;);</span><br><span class="line">    print(&quot;4. flutter receive swift reply ：$message&quot;);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  @override</span><br><span class="line">  Widget build(BuildContext context) &#123;</span><br><span class="line">    return Scaffold(</span><br><span class="line">      appBar: AppBar(</span><br><span class="line">        title: Text(widget.title),</span><br><span class="line">      ),</span><br><span class="line">      body: Center(</span><br><span class="line">        child: Column(</span><br><span class="line">          mainAxisAlignment: MainAxisAlignment.center,</span><br><span class="line">        ),</span><br><span class="line">      ),</span><br><span class="line">      floatingActionButton: FloatingActionButton(</span><br><span class="line">        onPressed: _sendMessage,</span><br><span class="line">        tooltip: &#x27;Increment&#x27;,</span><br><span class="line">        child: Text(&quot;Send&quot;),</span><br><span class="line">      ),</span><br><span class="line">    );</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Swift-代码"><a href="#Swift-代码" class="headerlink" title="Swift 代码"></a>Swift 代码</h2><p>这部分，<code>setMessageHandler</code> 同样是接收 flutter 发送过来的消息并回复。</p>
+<p>项目启动 5s 后，主动向 flutter 发送一条消息，并且在回调中接收 flutter 对于这条消息的回复。</p>
+<figure class="highlight swift"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> UIKit</span><br><span class="line"><span class="keyword">import</span> Flutter</span><br><span class="line"></span><br><span class="line"><span class="keyword">@UIApplicationMain</span></span><br><span class="line"><span class="keyword">@objc</span> <span class="keyword">class</span> <span class="title class_">AppDelegate</span>: <span class="title class_">FlutterAppDelegate</span> &#123;</span><br><span class="line">  <span class="keyword">override</span> <span class="keyword">func</span> <span class="title function_">application</span>(</span><br><span class="line">    <span class="keyword">_</span> <span class="params">application</span>: <span class="type">UIApplication</span>,</span><br><span class="line">    <span class="params">didFinishLaunchingWithOptions</span> <span class="params">launchOptions</span>: [<span class="type">UIApplication</span>.<span class="params">LaunchOptionsKey</span>: <span class="keyword">Any</span>]<span class="operator">?</span></span><br><span class="line">  ) -&gt; <span class="type">Bool</span> &#123;</span><br><span class="line"></span><br><span class="line">      <span class="keyword">let</span> controller: <span class="type">FlutterViewController</span> <span class="operator">=</span> window<span class="operator">?</span>.rootViewController <span class="keyword">as!</span> <span class="type">FlutterViewController</span></span><br><span class="line">      <span class="keyword">let</span> basicMessageChannel <span class="operator">=</span> <span class="type">FlutterBasicMessageChannel</span>(name: <span class="string">&quot;dev.basicMessageChannel&quot;</span>, binaryMessenger: controller.binaryMessenger, codec: <span class="type">FlutterStringCodec</span>.sharedInstance())</span><br><span class="line"></span><br><span class="line">      basicMessageChannel.setMessageHandler &#123; message, reply <span class="keyword">in</span></span><br><span class="line">          <span class="built_in">print</span>(<span class="string">&quot;5. swift receive：<span class="subst">\(message)</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">          reply(<span class="string">&quot;6. swift reply: <span class="subst">\(message)</span>&quot;</span>)</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="type">DispatchQueue</span>.main.asyncAfter(deadline: .now() <span class="operator">+</span> <span class="number">5.0</span>) &#123;</span><br><span class="line">          basicMessageChannel.sendMessage(<span class="string">&quot;7. swift send&quot;</span>) &#123; message <span class="keyword">in</span></span><br><span class="line">              <span class="built_in">print</span>(<span class="string">&quot;8. swift receive flutter reply: <span class="subst">\(message)</span>&quot;</span>)</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      <span class="type">GeneratedPluginRegistrant</span>.register(with: <span class="keyword">self</span>)</span><br><span class="line"></span><br><span class="line">      <span class="keyword">return</span> <span class="keyword">super</span>.application(application, didFinishLaunchingWithOptions: launchOptions)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="运行起来"><a href="#运行起来" class="headerlink" title="运行起来"></a>运行起来</h2><p>由于修改了原生代码，我们需要执行 <code>flutter clean</code>，先用 flutter 把它运行起来，但是这样看不到原生端的日志。</p>
+<p>又一个小技巧是我们后续从 xcode 启动项目，这样两端的日志我们都能看到。</p>
+<p>下面我直接贴出我们项目的日志，前 5s 我们先不要点击按钮，先查看 swift 向 flutter 发送消息的情况，然后我们再点击一次按钮。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">flutter: 1. flutter receive: 7. swift send</span><br><span class="line">8. swift receive flutter reply: Optional(2. flutter reply receive)</span><br><span class="line"></span><br><span class="line">5. swift receive：Optional(3. flutter send)</span><br><span class="line">4. flutter receive swift reply ：6. swift reply: Optional(3. flutter send)</span><br></pre></td></tr></table></figure>
+
+<p>前 5s 原生发送了一条消息，所以第一条日志是 flutter 接收到了 swift 发送的消息。</p>
+<p>随后 flutter 对消息做了回复，第二条日志表示 swift 接收到了 flutter 的回复消息。</p>
+<p>点击按钮后，flutter 发送了一个消息，swift 接收到了。</p>
+<p>最后，flutter 接收到了 swift 的回复消息。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>BasicMessageChannel</code> 是 Flutter 与原生最简单的通信方式，但它只能用于传递字符串和半结构化的信息，后面我们继续探索其他通信方式。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -179,7 +278,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
     </span>
 
   
@@ -296,7 +395,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
     </span>
 
   
@@ -424,7 +523,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
     </span>
 
   
@@ -525,7 +624,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
     </span>
 
   
@@ -615,7 +714,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
     </span>
 
   
@@ -710,7 +809,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
     </span>
 
   
@@ -815,7 +914,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
     </span>
 
   
@@ -901,7 +1000,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
     </span>
 
   
@@ -987,7 +1086,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
+      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
     </span>
 
   
@@ -1040,113 +1139,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://shenxiang11.github.io/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/blog/images/avatar.gif">
-      <meta itemprop="name" content="芯芯爸爸">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="前端芯事">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | 前端芯事">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/blog/2023/04/09/%E5%86%92%E6%B3%A1%E6%8E%92%E5%BA%8F/" class="post-title-link" itemprop="url">经典排序算法之冒泡排序：我的冒泡排序有什么问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-04-09 12:33:22" itemprop="dateCreated datePublished" datetime="2023-04-09T12:33:22+00:00">2023-04-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:27:58" itemprop="dateModified" datetime="2023-05-08T05:27:58+00:00">2023-05-08</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>力扣 912 题（排序数组），是一道适合练习各种排序方式的题。今天本想把部分排序算法一一实现一下，结果发现刚写冒泡就出问题了。</p>
-<p>为了加深印象，我做了两个个违背<del>祖宗</del>懒惰的决定，一是一定要重新拾起写博客的习惯，二是用 Canvas 把排序算法做成动画。</p>
-<hr>
-<h2 id="我的错误版本"><a href="#我的错误版本" class="headerlink" title="我的错误版本"></a>我的错误版本</h2><p>首先，看下我的错误版本的代码：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">sortArray</span>(<span class="params">nums: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span>[] &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;nums.<span class="property">length</span>-<span class="number">1</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j=i+<span class="number">1</span>; j&lt;nums.<span class="property">length</span>; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[i] &gt; nums[j]) &#123;</span><br><span class="line">                [nums[i], nums[j]] = [nums[j], nums[i]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> nums;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>配上我做的动画：</p>
-<p><img src="/blog/resources/2023-04-09/01.gif"></p>
-<p>动画中，前两轮的逻辑我已经标注出来了，可以看出该算法的基本逻辑是，从每轮找出第 i 小的数，放到 i 的位置，最小值确实也是”冒泡”到了前面。<br>可以看出我这个实际上不是冒泡，而是有点接近选择排序，选择排序是找出最小值后，在一轮循环结束后再进行交换。<br>而我的这个算法，是每次遇到较小值后就进行交换，因此，我的算法不如选择排序。</p>
-<h2 id="它比真正的冒泡排序好吗？"><a href="#它比真正的冒泡排序好吗？" class="headerlink" title="它比真正的冒泡排序好吗？"></a>它比真正的冒泡排序好吗？</h2><p>如果你注意到动画的最后一帧，注意看我特意设置的重复项来验证排序是否稳定，原本 480’ 是排在 480 后面的，但是在完成排序后，480’ 反而跑到了相对前面的位置。</p>
-<p>这是由于在和较小值交换时，前面的 480 就有可能被交换到 480’ 的后面，从而相对顺序被破坏。</p>
-<p>而我们知道，冒泡排序是稳定的，因为冒泡排序中，只有左边的数字大于右边的数字时才会发生交换，相等的数字之间不会发生交换，所以它是稳定的。</p>
-<p>所以，我的错误写法还丢失了冒泡排序的稳定的优势。</p>
-<p>复杂度方面，同样的实际复杂度，交换的次数也是一样的，所以我的算法没有任何意义。</p>
-<h2 id="正确写法"><a href="#正确写法" class="headerlink" title="正确写法"></a>正确写法</h2><p>我们可以先查询一下维基百科对冒泡排序算法的描述：</p>
-<ol>
-<li>比较相邻的元素。如果第一个比第二个大，就交换它们两个。</li>
-<li>对每一对相邻元素作同样的工作，从开始第一对到结尾的最后一对。这步做完后，最后的元素会是最大的数。</li>
-<li>针对所有的元素重复以上的步骤，除了最后一个。 </li>
-<li>持续每次对越来越少的元素重复上面的步骤，直到没有任何一对数字需要比较。</li>
-</ol>
-<p>由此给出实现并不困难：</p>
-<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">sortArray</span>(<span class="params">nums: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span>[] &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i=<span class="number">0</span>; i&lt;nums.<span class="property">length</span>; i++) &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> j=<span class="number">0</span>; j&lt;nums.<span class="property">length</span>-<span class="number">1</span>-i; j++) &#123;</span><br><span class="line">            <span class="keyword">if</span> (nums[j] &gt; nums[j+<span class="number">1</span>]) &#123;</span><br><span class="line">                [nums[j], nums[j+<span class="number">1</span>]] = [nums[j+<span class="number">1</span>], nums[j]];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> nums;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>动画是这样的：</p>
-<p><img src="/blog/resources/2023-04-09/02.gif"></p>
-<p>可以从图中看出，每一轮结束，是最大值会出现在正确的位置。而且相同的元素的相对位置是正确的。</p>
-<h2 id="反思"><a href="#反思" class="headerlink" title="反思"></a>反思</h2><p>从两种实现来看，代码太像了，我原本的解法估计是看网上某处学来的，本质还是自己理解的不到位。</p>
-<p>如果面试遇到这种简单排序，写完发现结果是正确的，很容易认为自己的算法是正确的，会非常危险。</p>
-<p>所以网上学东西还是需要注意，更倾向于去看一些权威的资料，更要有自己的理解。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/blog/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/blog/">1</a><span class="page-number current">2</span>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/blog/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/blog/">1</a><span class="page-number current">2</span><a class="page-number" href="/blog/page/3/">3</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/blog/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

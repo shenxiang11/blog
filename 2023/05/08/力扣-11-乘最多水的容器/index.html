@@ -19,30 +19,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"shenxiang11.github.io","root":"/blog/","images":"/blog/images","scheme":"Muse","darkmode":false,"version":"8.16.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/blog/js/config.js"></script>
 
-    <meta name="description" content="前言 就像图中你所看到的，该网站导航栏处，给它下方的滚动的元素添加了一个比较炫酷的效果。 CSS 有个很多效果并不需要很多知识，但是开发人员往往很难想到，这次目标就是模仿一下这个效果。    原理简单介绍首先介绍一下 radial-gradient，创建一个图像，该图像由从原点辐射的两种或多种颜色之间的渐进过渡组成。它的形状可以是圆形或椭圆形。 我们使用它在 4x4 的界面上，绘制一个 1x1 的">
+    <meta name="description" content="力扣 11: 乘最多水的容器 前言因为之前一篇题解提到了这道题，说到了一个移动较短的指针的一个结论，所以在这边给出实现，并讲一下为什么是这样的结论。 简单解释我们这里采用双指针法，此时面积（盛水最多）是较短边乘以两个指针的差。 由于我们还需要搜索在两个指针的差变小的情况下，还是否存在面积变大的情况。 此时，我们不可能去移动较长的边，因为这样面积一定会变更小，所以我们需要每次移动较短的边，看看面积是">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Element Plus 文档导航效果模仿">
-<meta property="og:url" content="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/index.html">
+<meta property="og:title" content="力扣 11: 乘最多水的容器">
+<meta property="og:url" content="https://shenxiang11.github.io/blog/2023/05/08/%E5%8A%9B%E6%89%A3-11-%E4%B9%98%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/index.html">
 <meta property="og:site_name" content="前端芯事">
-<meta property="og:description" content="前言 就像图中你所看到的，该网站导航栏处，给它下方的滚动的元素添加了一个比较炫酷的效果。 CSS 有个很多效果并不需要很多知识，但是开发人员往往很难想到，这次目标就是模仿一下这个效果。    原理简单介绍首先介绍一下 radial-gradient，创建一个图像，该图像由从原点辐射的两种或多种颜色之间的渐进过渡组成。它的形状可以是圆形或椭圆形。 我们使用它在 4x4 的界面上，绘制一个 1x1 的">
+<meta property="og:description" content="力扣 11: 乘最多水的容器 前言因为之前一篇题解提到了这道题，说到了一个移动较短的指针的一个结论，所以在这边给出实现，并讲一下为什么是这样的结论。 简单解释我们这里采用双指针法，此时面积（盛水最多）是较短边乘以两个指针的差。 由于我们还需要搜索在两个指针的差变小的情况下，还是否存在面积变大的情况。 此时，我们不可能去移动较长的边，因为这样面积一定会变更小，所以我们需要每次移动较短的边，看看面积是">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://shenxiang11.github.io/blog/resources/2023-04-13/01.gif">
-<meta property="article:published_time" content="2023-04-13T08:25:19.000Z">
+<meta property="article:published_time" content="2023-05-08T13:35:47.000Z">
 <meta property="article:modified_time" content="2023-05-08T05:45:37.720Z">
 <meta property="article:author" content="芯芯爸爸">
-<meta property="article:tag" content="CSS">
+<meta property="article:tag" content="算法">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://shenxiang11.github.io/blog/resources/2023-04-13/01.gif">
 
 
-<link rel="canonical" href="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/">
+<link rel="canonical" href="https://shenxiang11.github.io/blog/2023/05/08/%E5%8A%9B%E6%89%A3-11-%E4%B9%98%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/","path":"2023/04/13/Element-Plus-文档导航效果模仿/","title":"Element Plus 文档导航效果模仿"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://shenxiang11.github.io/blog/2023/05/08/%E5%8A%9B%E6%89%A3-11-%E4%B9%98%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/","path":"2023/05/08/力扣-11-乘最多水的容器/","title":"力扣 11: 乘最多水的容器"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Element Plus 文档导航效果模仿 | 前端芯事</title>
+<title>力扣 11: 乘最多水的容器 | 前端芯事</title>
   
 
 
@@ -107,7 +105,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">原理简单介绍</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E8%A7%A3%E9%87%8A"><span class="nav-number">2.</span> <span class="nav-text">简单解释</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.</span> <span class="nav-text">实现</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -152,7 +150,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://shenxiang11.github.io/blog/2023/04/13/Element-Plus-%E6%96%87%E6%A1%A3%E5%AF%BC%E8%88%AA%E6%95%88%E6%9E%9C%E6%A8%A1%E4%BB%BF/">
+    <link itemprop="mainEntityOfPage" href="https://shenxiang11.github.io/blog/2023/05/08/%E5%8A%9B%E6%89%A3-11-%E4%B9%98%E6%9C%80%E5%A4%9A%E6%B0%B4%E7%9A%84%E5%AE%B9%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/blog/images/avatar.gif">
@@ -165,12 +163,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Element Plus 文档导航效果模仿 | 前端芯事">
+      <meta itemprop="name" content="力扣 11: 乘最多水的容器 | 前端芯事">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Element Plus 文档导航效果模仿
+          力扣 11: 乘最多水的容器
         </h1>
 
         <div class="post-meta-container">
@@ -180,15 +178,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2023-04-13 08:25:19" itemprop="dateCreated datePublished" datetime="2023-04-13T08:25:19+00:00">2023-04-13</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-08 05:45:37" itemprop="dateModified" datetime="2023-05-08T05:45:37+00:00">2023-05-08</time>
+      <time title="创建时间：2023-05-08 13:35:47 / 修改时间：05:45:37" itemprop="dateCreated datePublished" datetime="2023-05-08T13:35:47+00:00">2023-05-08</time>
     </span>
 
   
@@ -200,17 +192,12 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p><img src="/blog/resources/2023-04-13/01.gif"></p>
-<p>就像图中你所看到的，该网站导航栏处，给它下方的滚动的元素添加了一个比较炫酷的效果。</p>
-<p>CSS 有个很多效果并不需要很多知识，但是开发人员往往很难想到，这次目标就是模仿一下这个效果。</p>
-<iframe src="https://codesandbox.io/embed/hopeful-rgb-c1eps8?fontsize=14&hidenavigation=1&theme=dark&view=preview" width="100%" height="300" frameborder="0" loading="lazy" allowfullscreen></iframe>
-
-
-<h2 id="原理简单介绍"><a href="#原理简单介绍" class="headerlink" title="原理简单介绍"></a>原理简单介绍</h2><p>首先介绍一下 <code>radial-gradient</code>，创建一个图像，该图像由从原点辐射的两种或多种颜色之间的渐进过渡组成。它的形状可以是圆形或椭圆形。</p>
-<p>我们使用它在 4x4 的界面上，绘制一个 1x1 的透明的圆圈，然后将它平铺到整个导航栏，这是我们可以透过导航栏看到下面元素的原因。</p>
-<p>最后，是使用 <code>backdrop-filter</code>，它可以让你为一个元素后面区域添加图形效果（如模糊或颜色偏移）。</p>
-<p>因为它适用于元素背后的所有元素，为了看到效果，必须使元素或其背景至少部分透明，我们前一步刚好有一部分是透明的。</p>
-<p>具体应用的图形效果，<code>blur</code> 是高斯模糊，<code>saturate</code> 是修改图像饱和度，你可以在 <a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/CSS/filter">MDN</a> 看看设置它们的效果。</p>
+    <div class="post-body" itemprop="articleBody"><p><a target="_blank" rel="noopener" href="https://leetcode.cn/problems/trapping-rain-water/">力扣 11: 乘最多水的容器</a></p>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>因为之前一篇题解提到了这道题，说到了一个移动较短的指针的一个结论，所以在这边给出实现，并讲一下为什么是这样的结论。</p>
+<h2 id="简单解释"><a href="#简单解释" class="headerlink" title="简单解释"></a>简单解释</h2><p>我们这里采用双指针法，此时面积（盛水最多）是较短边乘以两个指针的差。</p>
+<p>由于我们还需要搜索在两个指针的差变小的情况下，还是否存在面积变大的情况。</p>
+<p>此时，我们不可能去移动较长的边，因为这样面积一定会变更小，所以我们需要每次移动较短的边，看看面积是否变大，直到双指针相遇即可。</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">maxArea</span>(<span class="params">height: <span class="built_in">number</span>[]</span>): <span class="built_in">number</span> &#123;</span><br><span class="line">  <span class="keyword">let</span> max = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">let</span> left = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">let</span> right = height.<span class="property">length</span> - <span class="number">1</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">while</span> (left &lt; right) &#123;</span><br><span class="line">    max = <span class="title class_">Math</span>.<span class="title function_">max</span>(max, <span class="title class_">Math</span>.<span class="title function_">min</span>(height[left], height[right]) * (right - left));</span><br><span class="line">  </span><br><span class="line">    <span class="keyword">if</span> (height[left] &lt; height[right]) &#123;</span><br><span class="line">      left++</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      right--</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">return</span> max;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -220,21 +207,18 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/blog/tags/CSS/" rel="tag"># CSS</a>
+              <a href="/blog/tags/%E7%AE%97%E6%B3%95/" rel="tag"># 算法</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/blog/2023/04/12/%E5%B8%B8%E7%94%A8%E7%9A%84%E6%9C%AF%E8%AF%AD%E5%8F%8A%E8%8B%B1%E6%96%87%E7%BC%A9%E5%86%99%EF%BC%88%E4%B8%8D%E5%AE%9A%E6%9C%9F%E6%9B%B4%E6%96%B0%EF%BC%89/" rel="prev" title="常用的术语及英文缩写（不定期更新）">
-                  <i class="fa fa-chevron-left"></i> 常用的术语及英文缩写（不定期更新）
+                <a href="/blog/2023/05/08/%E5%8A%9B%E6%89%A3-42-%E6%8E%A5%E9%9B%A8%E6%B0%B4/" rel="prev" title="力扣 42: 接雨水">
+                  <i class="fa fa-chevron-left"></i> 力扣 42: 接雨水
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/blog/2023/04/14/ios-swift-%E5%B7%A5%E7%A8%8B%E9%9B%86%E6%88%90-react-native/" rel="next" title="iOS Swift 工程集成 React Native">
-                  iOS Swift 工程集成 React Native <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
